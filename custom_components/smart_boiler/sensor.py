@@ -1,7 +1,12 @@
 # custom_components/smart_boiler/sensor.py
 import logging
 from homeassistant.helpers.entity import Entity
-from homeassistant.const import TEMP_CELSIUS, PRESSURE_BAR, VOLUME_CUBIC_METERS, POWER_WATT
+from homeassistant.const import (
+    UnitOfTemperature,  # Celsius, Fahrenheit, ecc.
+    UnitOfPressure,     # BAR, PASCAL, ecc.
+    UnitOfVolume,       # CUBIC_METERS, LITERS, ecc.
+    UnitOfPower,        # WATT, KILO_WATT, ecc.
+)
 from .const import DOMAIN, GAS_TYPES
 
 _LOGGER = logging.getLogger(__name__)
@@ -22,7 +27,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     # Calcola il consumo di gas
     gas_consumption_kwh = gas_flow_rate * calorific_value
-    entities.append(SmartBoilerSensor("Gas Consumption", gas_consumption_kwh, "kWh"))
+    entities.append(SmartBoilerSensor("Gas Consumption", gas_consumption_kwh, UnitOfPower.KILO_WATT))
 
     async_add_entities(entities)
 
