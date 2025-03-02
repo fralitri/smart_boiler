@@ -1,7 +1,5 @@
 # custom_components/smart_boiler/const.py
-from homeassistant.const import (
-    UnitOfVolume,  # Per CUBIC_METERS
-)
+from homeassistant.const import UnitOfVolume
 
 DOMAIN = "smart_boiler"
 
