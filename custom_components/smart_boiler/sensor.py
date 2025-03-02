@@ -15,6 +15,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_entity"],
         config_entry.data["power_threshold_standby"],
         config_entry.data["power_threshold_acs"],
+        config_entry.data["power_threshold_circulator"],
         config_entry.data["power_threshold_heating"],
     ))
 
@@ -23,12 +24,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
 
-    def __init__(self, name, power_entity, threshold_standby, threshold_acs, threshold_heating):
+    def __init__(self, name, power_entity, threshold_standby, threshold_acs, threshold_circulator, threshold_heating):
         """Initialize the sensor."""
         self._name = name
         self._power_entity = power_entity
         self._threshold_standby = threshold_standby
         self._threshold_acs = threshold_acs
+        self._threshold_circulator = threshold_circulator
         self._threshold_heating = threshold_heating
         self._state = None
         self._attributes = {}
@@ -56,7 +58,9 @@ class SmartBoilerStateSensor(Entity):
             self._state = "standby"
         elif self._threshold_standby <= power < self._threshold_acs:
             self._state = "acs"
-        elif self._threshold_acs <= power < self._threshold_heating:
+        elif self._threshold_acs <= power < self._threshold_circulator:
+            self._state = "circolatore"
+        elif self._threshold_circulator <= power < self._threshold_heating:
             self._state = "riscaldamento"
         else:
             self._state = "errore"
@@ -65,5 +69,6 @@ class SmartBoilerStateSensor(Entity):
             "power": power,
             "threshold_standby": self._threshold_standby,
             "threshold_acs": self._threshold_acs,
+            "threshold_circulator": self._threshold_circulator,
             "threshold_heating": self._threshold_heating,
         }
