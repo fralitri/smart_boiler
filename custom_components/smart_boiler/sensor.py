@@ -1,29 +1,36 @@
 # custom_components/smart_boiler/sensor.py
 import logging
 from homeassistant.helpers.entity import Entity
-from homeassistant.const import UnitOfTemperature
+from homeassistant.const import UnitOfPower
 
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
-    """Set up the Smart Boiler integration."""
-    # Non creiamo nuovi sensori, ma utilizziamo quelli esistenti.
-    # Possiamo invece creare un'entità virtuale per raggruppare i dati.
+    """Set up the Smart Boiler sensors from a config entry."""
     entities = []
 
-    # Creiamo un'entità virtuale per raggruppare i dati
-    entities.append(SmartBoilerGroupSensor("Smart Boiler Status", config_entry.data))
+    # Aggiungi il sensore "Stato Caldaia"
+    entities.append(SmartBoilerStateSensor(
+        "Stato Caldaia",
+        config_entry.data["power_entity"],
+        config_entry.data["power_threshold_standby"],
+        config_entry.data["power_threshold_acs"],
+        config_entry.data["power_threshold_heating"],
+    ))
 
     async_add_entities(entities)
 
-class SmartBoilerGroupSensor(Entity):
-    """Representation of a Smart Boiler Group Sensor."""
+class SmartBoilerStateSensor(Entity):
+    """Representation of the Smart Boiler State Sensor."""
 
-    def __init__(self, name, config_data):
+    def __init__(self, name, power_entity, threshold_standby, threshold_acs, threshold_heating):
         """Initialize the sensor."""
         self._name = name
-        self._config_data = config_data
-        self._state = "ok"  # Stato predefinito
+        self._power_entity = power_entity
+        self._threshold_standby = threshold_standby
+        self._threshold_acs = threshold_acs
+        self._threshold_heating = threshold_heating
+        self._state = None
         self._attributes = {}
 
     @property
@@ -43,17 +50,20 @@ class SmartBoilerGroupSensor(Entity):
 
     async def async_update(self):
         """Fetch new state data for the sensor."""
-        # Aggiorna gli attributi con i valori delle entità esistenti
-        self._attributes = {
-            "hot_water_temperature": self.hass.states.get(self._config_data["hot_water_temp_entity"]).state,
-            "cold_water_temperature": self.hass.states.get(self._config_data["cold_water_temp_entity"]).state,
-            "heating_supply_temperature": self.hass.states.get(self._config_data["heating_supply_temp_entity"]).state,
-            "heating_return_temperature": self.hass.states.get(self._config_data["heating_return_temp_entity"]).state,
-            "flue_temperature": self.hass.states.get(self._config_data["flue_temp_entity"]).state,
-        }
+        power = float(self.hass.states.get(self._power_entity).state)
 
-        # Puoi aggiungere logica per calcolare lo stato complessivo
-        if float(self._attributes["hot_water_temperature"]) > 80:
-            self._state = "warning"
+        if power < self._threshold_standby:
+            self._state = "standby"
+        elif self._threshold_standby <= power < self._threshold_acs:
+            self._state = "acs"
+        elif self._threshold_acs <= power < self._threshold_heating:
+            self._state = "riscaldamento"
         else:
-            self._state = "ok"
+            self._state = "errore"
+
+        self._attributes = {
+            "power": power,
+            "threshold_standby": self._threshold_standby,
+            "threshold_acs": self._threshold_acs,
+            "threshold_heating": self._threshold_heating,
+        }
