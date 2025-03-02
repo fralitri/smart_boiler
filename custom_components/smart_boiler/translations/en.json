@@ -2,37 +2,38 @@
   "config": {
     "step": {
       "user": {
-        "title": "Configure Smart Boiler",
-        "description": "Set up your Smart Boiler integration.",
+        "title": "Configura Smart Boiler",
+        "description": "Configura l'integrazione della tua caldaia intelligente.",
         "data": {
-          "external_temp_entity": "External Temperature Sensor",
-          "flue_temp_entity": "Flue Temperature Sensor",
-          "hot_water_temp_entity": "Hot Water Temperature Sensor",
-          "cold_water_temp_entity": "Cold Water Temperature Sensor",
-          "heating_supply_temp_entity": "Heating Supply Temperature Sensor",
-          "heating_return_temp_entity": "Heating Return Temperature Sensor",
-          "thermostat_demand_entity": "Thermostat Demand Sensor",
-          "photoresistor_entity": "Photoresistor Sensor",
-          "electric_consumption_standby_entity": "Standby Electric Consumption Sensor",
-          "electric_consumption_hot_water_entity": "Hot Water Electric Consumption Sensor",
-          "electric_consumption_heating_entity": "Heating Electric Consumption Sensor",
-          "heating_power_nominal_kw": "Heating Power Nominal (kW)",
-          "hot_water_power_nominal_kw": "Hot Water Power Nominal (kW)",
-          "gas_type": "Gas Type",
-          "gas_flow_rate": "Gas Flow Rate",
-          "heating_flow_nominal_kw": "Heating Flow Nominal (kW)",
-          "adjustable_power_max_kw": "Adjustable Power Max (kW)",
-          "water_capacity_dm3": "Water Capacity (dm³)",
-          "max_heating_water_temp": "Max Heating Water Temperature (°C)",
-          "max_hot_water_temp": "Max Hot Water Temperature (°C)"
+          "external_temp_entity": "Sensore Temperatura Esterna",
+          "flue_temp_entity": "Sensore Temperatura Fumi",
+          "hot_water_temp_entity": "Sensore Temperatura Acqua Calda Sanitaria",
+          "cold_water_temp_entity": "Sensore Temperatura Acqua Fredda Sanitaria",
+          "heating_supply_temp_entity": "Sensore Temperatura Mandata Riscaldamento",
+          "heating_return_temp_entity": "Sensore Temperatura Ritorno Riscaldamento",
+          "thermostat_demand_entity": "Richiesta Riscaldamento da Termostati",
+          "photoresistor_entity": "Rilevazione Attivazione Acqua Calda Sanitaria",
+          "electric_consumption_entity": "Sensore Consumo Elettrico (Shelly 1PM)",
+          "heating_power_nominal_kw": "Potenza Termica Riscaldamento Nominale (kW)",
+          "hot_water_power_nominal_kw": "Potenza Termica Acqua Sanitaria Nominale (kW)",
+          "gas_type": "Tipo di Gas Utilizzato",
+          "gas_flow_rate": "Portata di Gas (m³/h o kg/h)",
+          "heating_flow_nominal_kw": "Portata Termica Riscaldamento Nominale (kW)",
+          "adjustable_power_max_kw": "Potenza Regolabile Massima (kW)",
+          "water_capacity_dm3": "Capacità Acqua Caldaia (dm³)",
+          "max_heating_water_temp": "Temperatura Massima Acqua Riscaldamento (°C)",
+          "max_hot_water_temp": "Temperatura Massima Acqua Sanitaria (°C)",
+          "standby_power": "Potenza Elettrica in Standby (W)",
+          "hot_water_power": "Potenza Elettrica Produzione Acqua Calda (W)",
+          "heating_power": "Potenza Elettrica Riscaldamento (W)"
         }
       }
     },
     "error": {
-      "invalid_entity": "Invalid entity selected."
+      "invalid_entity": "Entità selezionata non valida."
     },
     "abort": {
-      "already_configured": "This device is already configured."
+      "already_configured": "Questo dispositivo è già configurato."
     }
   }
 }
