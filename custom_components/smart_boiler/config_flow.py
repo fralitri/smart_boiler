@@ -38,9 +38,9 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Required("power_entity"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
             ),
-            vol.Optional("power_threshold_standby", default=DEFAULT_POWER_THRESHOLD_STANDBY): int,
-            vol.Optional("power_threshold_acs", default=DEFAULT_POWER_THRESHOLD_ACS): int,
-            vol.Optional("power_threshold_heating", default=DEFAULT_POWER_THRESHOLD_HEATING): int,
+            vol.Required("power_threshold_standby", default=DEFAULT_POWER_THRESHOLD_STANDBY): int,
+            vol.Required("power_threshold_acs", default=DEFAULT_POWER_THRESHOLD_ACS): int,
+            vol.Required("power_threshold_heating", default=DEFAULT_POWER_THRESHOLD_HEATING): int,
         })
 
         return self.async_show_form(
@@ -89,9 +89,9 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
             vol.Required("power_entity", default=self.config_entry.options.get("power_entity")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
             ),
-            vol.Optional("power_threshold_standby", default=self.config_entry.options.get("power_threshold_standby", DEFAULT_POWER_THRESHOLD_STANDBY)): int,
-            vol.Optional("power_threshold_acs", default=self.config_entry.options.get("power_threshold_acs", DEFAULT_POWER_THRESHOLD_ACS)): int,
-            vol.Optional("power_threshold_heating", default=self.config_entry.options.get("power_threshold_heating", DEFAULT_POWER_THRESHOLD_HEATING)): int,
+            vol.Required("power_threshold_standby", default=self.config_entry.options.get("power_threshold_standby", DEFAULT_POWER_THRESHOLD_STANDBY)): int,
+            vol.Required("power_threshold_acs", default=self.config_entry.options.get("power_threshold_acs", DEFAULT_POWER_THRESHOLD_ACS)): int,
+            vol.Required("power_threshold_heating", default=self.config_entry.options.get("power_threshold_heating", DEFAULT_POWER_THRESHOLD_HEATING)): int,
         })
 
         return self.async_show_form(
