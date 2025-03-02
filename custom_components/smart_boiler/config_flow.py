@@ -3,7 +3,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers import selector
-from .const import DOMAIN
+from .const import DOMAIN, DEFAULT_POWER_THRESHOLD_STANDBY, DEFAULT_POWER_THRESHOLD_ACS, DEFAULT_POWER_THRESHOLD_HEATING
 
 class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Smart Boiler."""
@@ -16,11 +16,9 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            # Salva le entità selezionate
-            await self.async_create_lovelace_dashboard(user_input)
             return self.async_create_entry(title="Smart Boiler", data=user_input)
 
-        # Schema per la selezione delle entità
+        # Schema per la selezione delle entità e delle soglie
         data_schema = vol.Schema({
             vol.Required("hot_water_temp_entity"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
@@ -37,51 +35,18 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Required("flue_temp_entity"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
+            vol.Required("power_entity"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="power")
+            ),
+            vol.Optional("power_threshold_standby", default=DEFAULT_POWER_THRESHOLD_STANDBY): int,
+            vol.Optional("power_threshold_acs", default=DEFAULT_POWER_THRESHOLD_ACS): int,
+            vol.Optional("power_threshold_heating", default=DEFAULT_POWER_THRESHOLD_HEATING): int,
         })
 
         return self.async_show_form(
             step_id="user",
             data_schema=data_schema,
             errors=errors,
-        )
-
-    async def async_create_lovelace_dashboard(self, user_input):
-        """Create a Lovelace dashboard for the Smart Boiler."""
-        dashboard_config = {
-            "title": "Smart Boiler",
-            "views": [
-                {
-                    "title": "Stato Caldaia",
-                    "path": "caldaia",
-                    "cards": [
-                        {
-                            "type": "entities",
-                            "title": "Stato Caldaia",
-                            "entities": [
-                                {"entity": user_input["hot_water_temp_entity"], "name": "Acqua Calda Sanitaria"},
-                                {"entity": user_input["cold_water_temp_entity"], "name": "Acqua Fredda Sanitaria"},
-                                {"entity": user_input["heating_supply_temp_entity"], "name": "Mandata Riscaldamento"},
-                                {"entity": user_input["heating_return_temp_entity"], "name": "Ritorno Riscaldamento"},
-                                {"entity": user_input["flue_temp_entity"], "name": "Fumi Caldaia"},
-                            ],
-                        }
-                    ],
-                }
-            ],
-        }
-
-        # Aggiungi la scheda alla dashboard
-        await self.hass.services.async_call(
-            "lovelace",
-            "create",
-            {"config": dashboard_config},
-        )
-
-        # Notifica di conferma
-        await self.hass.services.async_call(
-            "notify",
-            "persistent_notification",
-            {"message": "Scheda Caldaia creata con successo!"},
         )
 
     @staticmethod
@@ -104,7 +69,7 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # Schema per la selezione delle entità
+        # Schema per la selezione delle entità e delle soglie
         data_schema = vol.Schema({
             vol.Required("hot_water_temp_entity", default=self.config_entry.options.get("hot_water_temp_entity")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
@@ -121,6 +86,12 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
             vol.Required("flue_temp_entity", default=self.config_entry.options.get("flue_temp_entity")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
+            vol.Required("power_entity", default=self.config_entry.options.get("power_entity")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="power")
+            ),
+            vol.Optional("power_threshold_standby", default=self.config_entry.options.get("power_threshold_standby", DEFAULT_POWER_THRESHOLD_STANDBY)): int,
+            vol.Optional("power_threshold_acs", default=self.config_entry.options.get("power_threshold_acs", DEFAULT_POWER_THRESHOLD_ACS)): int,
+            vol.Optional("power_threshold_heating", default=self.config_entry.options.get("power_threshold_heating", DEFAULT_POWER_THRESHOLD_HEATING)): int,
         })
 
         return self.async_show_form(
