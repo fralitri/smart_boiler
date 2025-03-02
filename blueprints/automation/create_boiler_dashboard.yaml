@@ -34,6 +34,12 @@ input:
     selector:
       entity:
         domain: sensor
+  power_entity:
+    name: Sensore Potenza Caldaia
+    description: "Seleziona il sensore per la potenza elettrica della caldaia."
+    selector:
+      entity:
+        domain: sensor
 
 trigger: []
 condition: []
@@ -55,6 +61,11 @@ action:
                   - entity: {{ heating_supply_temp_entity }}
                   - entity: {{ heating_return_temp_entity }}
                   - entity: {{ flue_temp_entity }}
+              - type: entities
+                title: "Stato Caldaia"
+                entities:
+                  - entity: sensor.boiler_state
+                  - entity: {{ power_entity }}
               - type: history-graph
                 entities:
                   - entity: {{ hot_water_temp_entity }}
