@@ -1,0 +1,44 @@
+blueprint:
+  name: Crea Scheda Caldaia
+  description: Crea una scheda Lovelace per visualizzare i valori della caldaia.
+  domain: automation
+
+input:
+  hot_water_temp_entity:
+    name: Sensore Acqua Calda Sanitaria
+    description: "Seleziona il sensore per la temperatura dell'acqua calda sanitaria."
+    selector:
+      entity:
+        domain: sensor
+  cold_water_temp_entity:
+    name: Sensore Acqua Fredda Sanitaria
+    description: "Seleziona il sensore per la temperatura dell'acqua fredda sanitaria."
+    selector:
+      entity:
+        domain: sensor
+  heating_supply_temp_entity:
+    name: Sensore Mandata Riscaldamento
+    description: "Seleziona il sensore per la temperatura della mandata di riscaldamento."
+    selector:
+      entity:
+        domain: sensor
+  heating_return_temp_entity:
+    name: Sensore Ritorno Riscaldamento
+    description: "Seleziona il sensore per la temperatura del ritorno di riscaldamento."
+    selector:
+      entity:
+        domain: sensor
+  flue_temp_entity:
+    name: Sensore Fumi Caldaia
+    description: "Seleziona il sensore per la temperatura dei fumi della caldaia."
+    selector:
+      entity:
+        domain: sensor
+
+trigger: []
+condition: []
+action:
+  - service: lovelace.reload
+  - service: notify.persistent_notification
+    data:
+      message: "Scheda Caldaia creata con successo!"
