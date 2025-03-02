@@ -38,7 +38,25 @@ input:
 trigger: []
 condition: []
 action:
-  - service: lovelace.reload
-  - service: notify.persistent_notification
+  - service: lovelace.dashboard_create
     data:
-      message: "Scheda Caldaia creata con successo!"
+      url_path: boiler_dashboard
+      title: "Smart Boiler Dashboard"
+      mode: yaml
+      config:
+        views:
+          - title: "Boiler Status"
+            cards:
+              - type: entities
+                title: "Temperature Sensors"
+                entities:
+                  - entity: {{ hot_water_temp_entity }}
+                  - entity: {{ cold_water_temp_entity }}
+                  - entity: {{ heating_supply_temp_entity }}
+                  - entity: {{ heating_return_temp_entity }}
+                  - entity: {{ flue_temp_entity }}
+              - type: history-graph
+                entities:
+                  - entity: {{ hot_water_temp_entity }}
+                  - entity: {{ heating_supply_temp_entity }}
+                hours_to_show: 24
