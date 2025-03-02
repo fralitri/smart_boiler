@@ -13,6 +13,7 @@
           "power_entity": "Boiler Power Sensor",
           "power_threshold_standby": "Standby Power Threshold (W)",
           "power_threshold_acs": "ACS Power Threshold (W)",
+          "power_threshold_circulator": "Circulator Power Threshold (W)",
           "power_threshold_heating": "Heating Power Threshold (W)"
         }
       }
