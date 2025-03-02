@@ -3,7 +3,13 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers import selector
-from .const import DOMAIN, DEFAULT_POWER_THRESHOLD_STANDBY, DEFAULT_POWER_THRESHOLD_ACS, DEFAULT_POWER_THRESHOLD_HEATING
+from .const import (
+    DOMAIN,
+    DEFAULT_POWER_THRESHOLD_STANDBY,
+    DEFAULT_POWER_THRESHOLD_ACS,
+    DEFAULT_POWER_THRESHOLD_CIRCULATOR,
+    DEFAULT_POWER_THRESHOLD_HEATING,
+)
 
 class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Smart Boiler."""
@@ -40,6 +46,7 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             ),
             vol.Required("power_threshold_standby", default=DEFAULT_POWER_THRESHOLD_STANDBY): int,
             vol.Required("power_threshold_acs", default=DEFAULT_POWER_THRESHOLD_ACS): int,
+            vol.Required("power_threshold_circulator", default=DEFAULT_POWER_THRESHOLD_CIRCULATOR): int,
             vol.Required("power_threshold_heating", default=DEFAULT_POWER_THRESHOLD_HEATING): int,
         })
 
@@ -91,6 +98,7 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
             ),
             vol.Required("power_threshold_standby", default=self.config_entry.options.get("power_threshold_standby", DEFAULT_POWER_THRESHOLD_STANDBY)): int,
             vol.Required("power_threshold_acs", default=self.config_entry.options.get("power_threshold_acs", DEFAULT_POWER_THRESHOLD_ACS)): int,
+            vol.Required("power_threshold_circulator", default=self.config_entry.options.get("power_threshold_circulator", DEFAULT_POWER_THRESHOLD_CIRCULATOR)): int,
             vol.Required("power_threshold_heating", default=self.config_entry.options.get("power_threshold_heating", DEFAULT_POWER_THRESHOLD_HEATING)): int,
         })
 
