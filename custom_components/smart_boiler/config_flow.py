@@ -16,6 +16,8 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
+            # Salva le entità selezionate
+            await self.async_create_lovelace_dashboard(user_input)
             return self.async_create_entry(title="Smart Boiler", data=user_input)
 
         # Schema per la selezione delle entità
@@ -41,6 +43,45 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=data_schema,
             errors=errors,
+        )
+
+    async def async_create_lovelace_dashboard(self, user_input):
+        """Create a Lovelace dashboard for the Smart Boiler."""
+        dashboard_config = {
+            "title": "Smart Boiler",
+            "views": [
+                {
+                    "title": "Stato Caldaia",
+                    "path": "caldaia",
+                    "cards": [
+                        {
+                            "type": "entities",
+                            "title": "Stato Caldaia",
+                            "entities": [
+                                {"entity": user_input["hot_water_temp_entity"], "name": "Acqua Calda Sanitaria"},
+                                {"entity": user_input["cold_water_temp_entity"], "name": "Acqua Fredda Sanitaria"},
+                                {"entity": user_input["heating_supply_temp_entity"], "name": "Mandata Riscaldamento"},
+                                {"entity": user_input["heating_return_temp_entity"], "name": "Ritorno Riscaldamento"},
+                                {"entity": user_input["flue_temp_entity"], "name": "Fumi Caldaia"},
+                            ],
+                        }
+                    ],
+                }
+            ],
+        }
+
+        # Aggiungi la scheda alla dashboard
+        await self.hass.services.async_call(
+            "lovelace",
+            "create",
+            {"config": dashboard_config},
+        )
+
+        # Notifica di conferma
+        await self.hass.services.async_call(
+            "notify",
+            "persistent_notification",
+            {"message": "Scheda Caldaia creata con successo!"},
         )
 
     @staticmethod
