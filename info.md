@@ -1,4 +1,3 @@
-```markdown
 ### Smart Boiler
 
 Integra la tua caldaia intelligente in Home Assistant.
