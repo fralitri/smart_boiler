@@ -2,7 +2,7 @@
 import logging
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_state_change
-from homeassistant.const import UnitOfPower, UnitOfVolume, UnitOfEnergy
+from homeassistant.const import UnitOfPower, UnitOfVolume
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,6 +15,9 @@ GAS_CONVERSION_FACTORS = {
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Smart Boiler sensors from a config entry."""
     entities = []
+
+    # Debug: Stampa le configurazioni
+    _LOGGER.debug(f"Configurazioni: {config_entry.data}")
 
     # Crea il sensore "Stato Caldaia"
     boiler_state_sensor = SmartBoilerStateSensor(
@@ -62,6 +65,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         gas_consumption_heating,
         gas_consumption_total,
     ])
+
+    # Debug: Stampa le entità create
+    _LOGGER.debug(f"Entità create: {entities}")
 
     # Registra le entità in Home Assistant
     async_add_entities(entities, update_before_add=True)
