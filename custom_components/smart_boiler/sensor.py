@@ -28,6 +28,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_threshold_acs"],
         config_entry.data["power_threshold_circulator"],
         config_entry.data["power_threshold_heating"],
+        config_entry.entry_id,  # Usa l'ID della configurazione come parte dell'ID univoco
     )
 
     # Crea i sensori per il consumo di gas
@@ -38,6 +39,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         "acs",
         config_entry.data["thermal_power"],
         config_entry.data["gas_type"],
+        config_entry.entry_id,  # Usa l'ID della configurazione come parte dell'ID univoco
     )
 
     gas_consumption_heating = GasConsumptionSensor(
@@ -47,6 +49,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         "riscaldamento",
         config_entry.data["thermal_power"],
         config_entry.data["gas_type"],
+        config_entry.entry_id,  # Usa l'ID della configurazione come parte dell'ID univoco
     )
 
     gas_consumption_total = GasConsumptionSensor(
@@ -56,6 +59,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         None,  # Somma di tutti i consumi
         config_entry.data["thermal_power"],
         config_entry.data["gas_type"],
+        config_entry.entry_id,  # Usa l'ID della configurazione come parte dell'ID univoco
     )
 
     # Aggiungi i sensori alla lista delle entità
@@ -77,10 +81,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         hass, config_entry.data["power_entity"], boiler_state_sensor.async_update_callback
     )
 
+    # Forza la creazione delle entità
+    for entity in entities:
+        entity.async_write_ha_state()
+
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
 
-    def __init__(self, hass, name, power_entity, threshold_standby, threshold_acs, threshold_circulator, threshold_heating):
+    def __init__(self, hass, name, power_entity, threshold_standby, threshold_acs, threshold_circulator, threshold_heating, config_entry_id):
         """Initialize the sensor."""
         self._hass = hass
         self._name = name
@@ -91,6 +99,12 @@ class SmartBoilerStateSensor(Entity):
         self._threshold_heating = threshold_heating
         self._state = None
         self._attributes = {}
+        self._unique_id = f"{config_entry_id}_boiler_state"  # ID univoco
+
+    @property
+    def unique_id(self):
+        """Return the unique ID of the sensor."""
+        return self._unique_id
 
     @property
     def name(self):
@@ -149,7 +163,7 @@ class SmartBoilerStateSensor(Entity):
 class GasConsumptionSensor(Entity):
     """Representation of a Gas Consumption Sensor."""
 
-    def __init__(self, hass, name, boiler_state_sensor, mode, thermal_power, gas_type):
+    def __init__(self, hass, name, boiler_state_sensor, mode, thermal_power, gas_type, config_entry_id):
         """Initialize the sensor."""
         self._hass = hass
         self._name = name
@@ -159,6 +173,12 @@ class GasConsumptionSensor(Entity):
         self._gas_type = gas_type  # Tipo di gas (metano, GPL)
         self._state = 0.0  # Consumo cumulativo in m³ o kg
         self._last_update = None
+        self._unique_id = f"{config_entry_id}_gas_consumption_{mode if mode else 'total'}"  # ID univoco
+
+    @property
+    def unique_id(self):
+        """Return the unique ID of the sensor."""
+        return self._unique_id
 
     @property
     def name(self):
