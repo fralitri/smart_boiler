@@ -11,6 +11,8 @@
           "heating_return_temp_entity": "Heating Return Temperature Sensor",
           "flue_temp_entity": "Flue Temperature Sensor",
           "power_entity": "Boiler Power Sensor",
+          "thermal_power": "Thermal Power (kW)",
+          "gas_type": "Gas Type (metano/gpl)",
           "power_threshold_standby": "Standby Power Threshold (W)",
           "power_threshold_acs": "ACS Power Threshold (W)",
           "power_threshold_circulator": "Circulator Power Threshold (W)",
