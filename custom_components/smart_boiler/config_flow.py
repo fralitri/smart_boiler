@@ -1,9 +1,12 @@
 # custom_components/smart_boiler/config_flow.py
+import logging
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 from .const import DOMAIN, DEFAULT_POWER_THRESHOLD_STANDBY, DEFAULT_POWER_THRESHOLD_ACS, DEFAULT_POWER_THRESHOLD_CIRCULATOR, DEFAULT_POWER_THRESHOLD_HEATING
+
+_LOGGER = logging.getLogger(__name__)
 
 class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Smart Boiler."""
@@ -16,7 +19,34 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            return self.async_create_entry(title="Smart Boiler", data=user_input)
+            _LOGGER.debug(f"Dati inseriti dall'utente: {user_input}")
+            try:
+                # Verifica che tutti i campi siano presenti
+                required_fields = [
+                    "hot_water_temp_entity",
+                    "cold_water_temp_entity",
+                    "heating_supply_temp_entity",
+                    "heating_return_temp_entity",
+                    "flue_temp_entity",
+                    "power_entity",
+                    "thermal_power",
+                    "gas_type",
+                    "power_threshold_standby",
+                    "power_threshold_acs",
+                    "power_threshold_circulator",
+                    "power_threshold_heating",
+                ]
+                for field in required_fields:
+                    if field not in user_input:
+                        errors[field] = "campo_obbligatorio"
+                        _LOGGER.error(f"Campo mancante: {field}")
+
+                if not errors:
+                    _LOGGER.debug("Tutti i campi sono validi. Creazione della configurazione.")
+                    return self.async_create_entry(title="Smart Boiler", data=user_input)
+            except Exception as e:
+                _LOGGER.error(f"Errore durante la configurazione: {e}")
+                errors["base"] = "unknown"
 
         # Schema per la selezione delle entità e delle soglie
         data_schema = vol.Schema({
