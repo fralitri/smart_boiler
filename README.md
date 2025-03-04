@@ -10,10 +10,3 @@ Integra la tua caldaia intelligente in Home Assistant.
    - Seleziona **Integration** come categoria.
 3. Clicca su **Install** per installare il componente.
 4. Riavvia Home Assistant.
-
-## Configurazione
-Aggiungi il seguente codice al tuo `configuration.yaml`:
-
-```yaml
-sensor:
-  - platform: smart_boiler
