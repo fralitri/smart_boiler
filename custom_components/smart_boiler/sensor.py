@@ -7,7 +7,7 @@ from homeassistant.core import callback
 
 _LOGGER = logging.getLogger(__name__)
 
-DEBOUNCE_TIME = 0.1  # Ritardo di 0.1 secondi (100 millisecondi)
+DEBOUNCE_TIME = 0.01  # Ritardo di 0.1 secondi (100 millisecondi)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Smart Boiler sensors from a config entry."""
