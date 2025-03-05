@@ -3,8 +3,11 @@ import logging
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.const import UnitOfPower
+from homeassistant.core import callback
 
 _LOGGER = logging.getLogger(__name__)
+
+DEBOUNCE_TIME = 5  # Ritardo di 5 secondi
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Smart Boiler sensors from a config entry."""
@@ -46,6 +49,7 @@ class SmartBoilerStateSensor(Entity):
         self._threshold_heating = threshold_heating
         self._state = None
         self._attributes = {}
+        self._debounce_timer = None
 
     @property
     def name(self):
@@ -62,10 +66,21 @@ class SmartBoilerStateSensor(Entity):
         """Return additional attributes."""
         return self._attributes
 
-    async def async_update_callback(self, entity_id, old_state, new_state):
+    @callback
+    def async_update_callback(self, entity_id, old_state, new_state):
         """Handle state changes for the power sensor."""
+        if self._debounce_timer:
+            self._debounce_timer()
+
+        self._debounce_timer = self._hass.async_create_task(
+            self._hass.async_call_later(DEBOUNCE_TIME, self.async_update_and_write_state)
+        )
+
+    async def async_update_and_write_state(self, _now):
+        """Update the state and write it to Home Assistant."""
         await self.async_update()
-        self.async_write_ha_state()  # Aggiorna lo stato in Home Assistant
+        self.async_write_ha_state()
+        self._debounce_timer = None
 
     async def async_update(self):
         """Fetch new state data for the sensor."""
