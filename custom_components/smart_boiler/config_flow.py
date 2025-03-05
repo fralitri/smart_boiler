@@ -27,22 +27,28 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Schema per la selezione delle entità e delle soglie
         data_schema = vol.Schema({
             vol.Required("hot_water_temp_entity"): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for hot water temperature."
             ),
             vol.Required("cold_water_temp_entity"): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for cold water temperature."
             ),
             vol.Required("heating_supply_temp_entity"): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for heating supply temperature."
             ),
             vol.Required("heating_return_temp_entity"): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for heating return temperature."
             ),
             vol.Required("flue_temp_entity"): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for flue temperature."
             ),
             vol.Required("power_entity"): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="power")
+                selector.EntitySelectorConfig(domain="sensor", device_class="power"),
+                description="Select the sensor for boiler power consumption."
             ),
             vol.Required("power_threshold_standby", default=DEFAULT_POWER_THRESHOLD_STANDBY): int,
             vol.Required("power_threshold_acs", default=DEFAULT_POWER_THRESHOLD_ACS): int,
@@ -79,22 +85,28 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
         # Schema per la selezione delle entità e delle soglie
         data_schema = vol.Schema({
             vol.Required("hot_water_temp_entity", default=self.config_entry.options.get("hot_water_temp_entity")): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for hot water temperature."
             ),
             vol.Required("cold_water_temp_entity", default=self.config_entry.options.get("cold_water_temp_entity")): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for cold water temperature."
             ),
             vol.Required("heating_supply_temp_entity", default=self.config_entry.options.get("heating_supply_temp_entity")): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for heating supply temperature."
             ),
             vol.Required("heating_return_temp_entity", default=self.config_entry.options.get("heating_return_temp_entity")): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for heating return temperature."
             ),
             vol.Required("flue_temp_entity", default=self.config_entry.options.get("flue_temp_entity")): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature"),
+                description="Select the sensor for flue temperature."
             ),
             vol.Required("power_entity", default=self.config_entry.options.get("power_entity")): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="power")
+                selector.EntitySelectorConfig(domain="sensor", device_class="power"),
+                description="Select the sensor for boiler power consumption."
             ),
             vol.Required("power_threshold_standby", default=self.config_entry.options.get("power_threshold_standby", DEFAULT_POWER_THRESHOLD_STANDBY)): int,
             vol.Required("power_threshold_acs", default=self.config_entry.options.get("power_threshold_acs", DEFAULT_POWER_THRESHOLD_ACS)): int,
