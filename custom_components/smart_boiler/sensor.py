@@ -27,9 +27,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities.append(boiler_state_sensor)
 
     # Crea i sensori per il tempo di funzionamento
-    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "riscaldamento")
-    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs")
-    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", ["acs", "riscaldamento"])
+    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "riscaldamento", "mdi:radiator")
+    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs", "mdi:water-pump")
+    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", ["acs", "riscaldamento"], "mdi:clock")
 
     # Aggiungi i sensori di tempo alla lista delle entità
     entities.extend([heating_time_sensor, acs_time_sensor, total_time_sensor])
@@ -148,12 +148,13 @@ class SmartBoilerStateSensor(Entity):
 class SmartBoilerTimeSensor(Entity):
     """Representation of a Smart Boiler Time Sensor."""
 
-    def __init__(self, hass, name, target_states):
+    def __init__(self, hass, name, target_states, icon):
         """Initialize the sensor."""
         self._hass = hass
         self._name = name
         self._target_states = target_states if isinstance(target_states, list) else [target_states]
-        self._state = 0  # Tempo in secondi
+        self._icon = icon
+        self._state = "00:00:00"  # Formato hh:mm:ss
         self._last_update = datetime.now()
         self._last_state = None
 
@@ -168,9 +169,14 @@ class SmartBoilerTimeSensor(Entity):
         return self._state
 
     @property
+    def icon(self):
+        """Return the icon of the sensor."""
+        return self._icon
+
+    @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        return "s"
+        return None  # Non mostrare unità di misura
 
     async def async_update_time(self, new_state):
         """Update the time based on the new state."""
@@ -179,7 +185,9 @@ class SmartBoilerTimeSensor(Entity):
 
         # Aggiorna il tempo solo se lo stato è attivo
         if new_state in self._target_states:
-            self._state += elapsed_time
+            # Converti il tempo totale in secondi a hh:mm:ss
+            total_seconds = int(self._state_to_seconds(self._state) + int(elapsed_time)
+            self._state = self._seconds_to_hhmmss(total_seconds)
 
         # Aggiorna il timestamp dell'ultimo aggiornamento
         self._last_update = now
@@ -190,3 +198,15 @@ class SmartBoilerTimeSensor(Entity):
         )
 
         self.async_write_ha_state()
+
+    def _state_to_seconds(self, state):
+        """Convert hh:mm:ss to seconds."""
+        hh, mm, ss = map(int, state.split(":"))
+        return hh * 3600 + mm * 60 + ss
+
+    def _seconds_to_hhmmss(self, total_seconds):
+        """Convert seconds to hh:mm:ss."""
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60
+        return f"{hours:02}:{minutes:02}:{seconds:02}"
