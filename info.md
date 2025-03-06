@@ -13,6 +13,9 @@ Integra la tua caldaia intelligente in Home Assistant.
   - **Tempo di riscaldamento**: Misura il tempo totale in cui la caldaia è in modalità riscaldamento.
   - **Tempo ACS**: Misura il tempo totale in cui la caldaia è in modalità acqua calda sanitaria (ACS).
   - **Tempo totale**: Misura il tempo totale di funzionamento (riscaldamento + ACS).
+- Icone dinamiche per lo stato della caldaia.
+- Tempi di funzionamento in formato `hh:mm:ss`.
+- Azzeramento automatico dei tempi a mezzanotte.
 
 #### Requisiti
 - Home Assistant 2023.1 o superiore.
