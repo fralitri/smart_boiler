@@ -84,6 +84,22 @@ class SmartBoilerStateSensor(Entity):
         return self._state
 
     @property
+    def icon(self):
+        """Return the icon of the sensor based on the current state."""
+        if self._state == "riscaldamento":
+            return "mdi:radiator"
+        elif self._state == "acs":
+            return "mdi:water-pump"
+        elif self._state == "standby":
+            return "mdi:power-plug-off"
+        elif self._state == "circolatore":
+            return "mdi:reload"
+        elif self._state == "errore":
+            return "mdi:alert-circle"
+        else:
+            return "mdi:alert-circle"  # Icona predefinita per stati sconosciuti
+
+    @property
     def extra_state_attributes(self):
         """Return additional attributes."""
         return self._attributes
