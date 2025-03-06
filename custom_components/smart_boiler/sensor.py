@@ -24,13 +24,16 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_threshold_heating"],
     )
 
-    # Crea i sensori per il tempo di funzionamento
-    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "riscaldamento", boiler_state_sensor)
-    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs", boiler_state_sensor)
-    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", "total", boiler_state_sensor)
+    # Aggiungi il sensore principale alla lista delle entità
+    entities.append(boiler_state_sensor)
 
-    # Aggiungi i sensori alla lista delle entità
-    entities.extend([boiler_state_sensor, heating_time_sensor, acs_time_sensor, total_time_sensor])
+    # Crea i sensori per il tempo di funzionamento
+    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", boiler_state_sensor.entity_id, "riscaldamento")
+    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", boiler_state_sensor.entity_id, "acs")
+    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", boiler_state_sensor.entity_id, ["acs", "riscaldamento"])
+
+    # Aggiungi i sensori di tempo alla lista delle entità
+    entities.extend([heating_time_sensor, acs_time_sensor, total_time_sensor])
 
     # Registra le entità in Home Assistant
     async_add_entities(entities, update_before_add=True)
@@ -112,14 +115,13 @@ class SmartBoilerStateSensor(Entity):
 class SmartBoilerTimeSensor(Entity):
     """Representation of a Smart Boiler Time Sensor."""
 
-    def __init__(self, hass, name, mode, state_sensor):
+    def __init__(self, hass, name, entity_id, target_states):
         """Initialize the sensor."""
         self._hass = hass
         self._name = name
-        self._mode = mode
-        self._state_sensor = state_sensor
+        self._entity_id = entity_id
+        self._target_states = target_states if isinstance(target_states, list) else [target_states]
         self._state = 0  # Tempo in secondi
-        self._last_update = datetime.now()
 
     @property
     def name(self):
@@ -144,40 +146,30 @@ class SmartBoilerTimeSensor(Entity):
 
         # Ottieni la cronologia degli stati della caldaia
         history_list = await history.state_changes_during_period(
-            self._hass, start_time, end_time, self._state_sensor.entity_id
+            self._hass, start_time, end_time, self._entity_id
         )
 
         if not history_list:
             return
 
-        # Calcola il tempo trascorso nello stato desiderato
+        # Calcola il tempo trascorso negli stati desiderati
         total_time = timedelta()
         previous_state = None
         previous_time = start_time
 
-        for state in history_list.get(self._state_sensor.entity_id, []):
+        for state in history_list.get(self._entity_id, []):
             current_state = state.state
             current_time = state.last_changed
 
-            if previous_state is not None:
-                if self._mode == "total" and previous_state in ["acs", "riscaldamento"]:
-                    total_time += current_time - previous_time
-                elif self._mode == "acs" and previous_state == "acs":
-                    total_time += current_time - previous_time
-                elif self._mode == "heating" and previous_state == "riscaldamento":
-                    total_time += current_time - previous_time
+            if previous_state is not None and previous_state in self._target_states:
+                total_time += current_time - previous_time
 
             previous_state = current_state
             previous_time = current_time
 
         # Aggiungi il tempo dall'ultimo stato fino a ora
-        if previous_state is not None:
-            if self._mode == "total" and previous_state in ["acs", "riscaldamento"]:
-                total_time += end_time - previous_time
-            elif self._mode == "acs" and previous_state == "acs":
-                total_time += end_time - previous_time
-            elif self._mode == "heating" and previous_state == "riscaldamento":
-                total_time += end_time - previous_time
+        if previous_state is not None and previous_state in self._target_states:
+            total_time += end_time - previous_time
 
         # Aggiorna lo stato del sensore
         self._state = int(total_time.total_seconds())
