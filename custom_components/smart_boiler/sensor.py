@@ -4,7 +4,7 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.const import UnitOfPower
 from homeassistant.core import callback
-from datetime import datetime, timedelta
+from datetime import datetime
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -151,13 +151,22 @@ class SmartBoilerTimeSensor(Entity):
         now = datetime.now()
         elapsed_time = (now - self._last_update).total_seconds()
 
+        # Aggiorna il tempo solo se lo stato è cambiato
+        if self._last_state != new_state:
+            self._last_update = now
+            self._last_state = new_state
+
+        # Calcola il tempo in base alla modalità
         if self._mode == "total" and new_state in ["acs", "heating"]:
             self._state += elapsed_time
         elif self._mode == "acs" and new_state == "acs":
             self._state += elapsed_time
-        elif self._mode == "heating" and new_state == "heating":
+        elif self._mode == "heating" and new_state == "riscaldamento":
             self._state += elapsed_time
 
-        self._last_update = now
-        self._last_state = new_state
+        # Log di debug
+        _LOGGER.debug(
+            f"Sensore {self._name}: Stato={new_state}, Tempo trascorso={elapsed_time}, Tempo totale={self._state}"
+        )
+
         self.async_write_ha_state()
