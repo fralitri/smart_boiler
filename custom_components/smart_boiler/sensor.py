@@ -4,6 +4,7 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.const import UnitOfPower
 from homeassistant.core import callback
+from datetime import datetime, timedelta
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,8 +23,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_threshold_heating"],
     )
 
-    # Aggiungi il sensore alla lista delle entità
-    entities.append(boiler_state_sensor)
+    # Crea i sensori per il tempo di funzionamento
+    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "heating")
+    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs")
+    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", "total")
+
+    # Aggiungi i sensori alla lista delle entità
+    entities.extend([boiler_state_sensor, heating_time_sensor, acs_time_sensor, total_time_sensor])
 
     # Registra le entità in Home Assistant
     async_add_entities(entities, update_before_add=True)
@@ -101,3 +107,46 @@ class SmartBoilerStateSensor(Entity):
             "threshold_circulator": self._threshold_circulator,
             "threshold_heating": self._threshold_heating,
         }
+
+class SmartBoilerTimeSensor(Entity):
+    """Representation of a Smart Boiler Time Sensor."""
+
+    def __init__(self, hass, name, mode):
+        """Initialize the sensor."""
+        self._hass = hass
+        self._name = name
+        self._mode = mode
+        self._state = 0  # Tempo in secondi
+        self._last_update = datetime.now()
+        self._last_state = None
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return self._name
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement."""
+        return "s"
+
+    async def async_update_time(self, new_state):
+        """Update the time based on the new state."""
+        now = datetime.now()
+        elapsed_time = (now - self._last_update).total_seconds()
+
+        if self._mode == "total" and new_state in ["acs", "heating"]:
+            self._state += elapsed_time
+        elif self._mode == "acs" and new_state == "acs":
+            self._state += elapsed_time
+        elif self._mode == "heating" and new_state == "heating":
+            self._state += elapsed_time
+
+        self._last_update = now
+        self._last_state = new_state
+        self.async_write_ha_state()
