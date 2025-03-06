@@ -8,6 +8,6 @@ DEFAULT_POWER_THRESHOLD_CIRCULATOR = 150
 DEFAULT_POWER_THRESHOLD_HEATING = 200
 
 # Nomi delle nuove entità
-SENSOR_HEATING_TIME = "smart_boiler_heating_time"
-SENSOR_ACS_TIME = "smart_boiler_acs_time"
-SENSOR_TOTAL_TIME = "smart_boiler_total_time"
+SENSOR_HEATING_TIME = "tempo_riscaldamento"
+SENSOR_ACS_TIME = "tempo_acs"
+SENSOR_TOTAL_TIME = "tempo_totale"
