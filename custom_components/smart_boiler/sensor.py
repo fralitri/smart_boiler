@@ -12,7 +12,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Smart Boiler sensors from a config entry."""
     entities = []
 
-    # Crea il sensore "Stato Caldaia"
+    # Crea i sensori per il tempo di funzionamento
+    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "heating")
+    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs")
+    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", "total")
+
+    # Crea il sensore "Stato Caldaia" e passa i sensori di tempo
     boiler_state_sensor = SmartBoilerStateSensor(
         hass,
         "Stato Caldaia",
@@ -21,12 +26,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_threshold_acs"],
         config_entry.data["power_threshold_circulator"],
         config_entry.data["power_threshold_heating"],
+        heating_time_sensor,
+        acs_time_sensor,
+        total_time_sensor,
     )
-
-    # Crea i sensori per il tempo di funzionamento
-    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "heating")
-    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs")
-    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", "total")
 
     # Aggiungi i sensori alla lista delle entità
     entities.extend([boiler_state_sensor, heating_time_sensor, acs_time_sensor, total_time_sensor])
@@ -42,7 +45,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
 
-    def __init__(self, hass, name, power_entity, threshold_standby, threshold_acs, threshold_circulator, threshold_heating):
+    def __init__(self, hass, name, power_entity, threshold_standby, threshold_acs, threshold_circulator, threshold_heating, heating_time_sensor, acs_time_sensor, total_time_sensor):
         """Initialize the sensor."""
         self._hass = hass
         self._name = name
@@ -53,6 +56,9 @@ class SmartBoilerStateSensor(Entity):
         self._threshold_heating = threshold_heating
         self._state = None
         self._attributes = {}
+        self._heating_time_sensor = heating_time_sensor
+        self._acs_time_sensor = acs_time_sensor
+        self._total_time_sensor = total_time_sensor
 
     @property
     def name(self):
@@ -73,6 +79,11 @@ class SmartBoilerStateSensor(Entity):
         """Handle state changes for the power sensor."""
         await self.async_update()
         self.async_write_ha_state()  # Aggiorna lo stato in Home Assistant
+
+        # Aggiorna i sensori di tempo
+        await self._heating_time_sensor.async_update_time(self._state)
+        await self._acs_time_sensor.async_update_time(self._state)
+        await self._total_time_sensor.async_update_time(self._state)
 
     async def async_update(self):
         """Fetch new state data for the sensor."""
