@@ -4,7 +4,8 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.const import UnitOfPower
 from homeassistant.core import callback
-from datetime import datetime
+from datetime import datetime, timedelta
+from homeassistant.components.recorder import history
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,6 +27,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Aggiungi il sensore principale alla lista delle entità
     entities.append(boiler_state_sensor)
 
+    # Crea i sensori per il tempo di funzionamento
+    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", boiler_state_sensor.entity_id, "riscaldamento")
+    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", boiler_state_sensor.entity_id, "acs")
+    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", boiler_state_sensor.entity_id, ["acs", "riscaldamento"])
+
+    # Aggiungi i sensori di tempo alla lista delle entità
+    entities.extend([heating_time_sensor, acs_time_sensor, total_time_sensor])
+
     # Registra le entità in Home Assistant
     async_add_entities(entities, update_before_add=True)
 
@@ -33,58 +42,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_track_state_change(
         hass, config_entry.data["power_entity"], boiler_state_sensor.async_update_callback
     )
-
-    # Crea i sensori di tempo utilizzando history_stats
-    await _create_history_stats_sensors(hass, boiler_state_sensor.entity_id, async_add_entities)
-
-async def _create_history_stats_sensors(hass, entity_id, async_add_entities):
-    """Create history_stats sensors for boiler time tracking."""
-    from homeassistant.components.history_stats.sensor import HistoryStatsSensor
-
-    # Configura i sensori di tempo
-    sensors_config = [
-        {
-            "unique_id": SENSOR_HEATING_TIME,
-            "name": "Tempo Riscaldamento",
-            "entity_id": entity_id,
-            "state": "riscaldamento",
-            "type": "time",
-            "start": "{{ now().replace(hour=0, minute=0, second=0) }}",
-            "end": "{{ now() }}",
-        },
-        {
-            "unique_id": SENSOR_ACS_TIME,
-            "name": "Tempo ACS",
-            "entity_id": entity_id,
-            "state": "acs",
-            "type": "time",
-            "start": "{{ now().replace(hour=0, minute=0, second=0) }}",
-            "end": "{{ now() }}",
-        },
-        {
-            "unique_id": SENSOR_TOTAL_TIME,
-            "name": "Tempo Totale",
-            "entity_id": entity_id,
-            "state": ["acs", "riscaldamento"],
-            "type": "time",
-            "start": "{{ now().replace(hour=0, minute=0, second=0) }}",
-            "end": "{{ now() }}",
-        },
-    ]
-
-    # Crea i sensori di tempo
-    for config in sensors_config:
-        sensor = HistoryStatsSensor(
-            hass,
-            config["unique_id"],
-            config["name"],
-            config["entity_id"],
-            config["state"],
-            config["type"],
-            config["start"],
-            config["end"],
-        )
-        async_add_entities([sensor], True)
 
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
@@ -154,3 +111,72 @@ class SmartBoilerStateSensor(Entity):
             "threshold_circulator": self._threshold_circulator,
             "threshold_heating": self._threshold_heating,
         }
+
+class SmartBoilerTimeSensor(Entity):
+    """Representation of a Smart Boiler Time Sensor."""
+
+    def __init__(self, hass, name, entity_id, target_states):
+        """Initialize the sensor."""
+        self._hass = hass
+        self._name = name
+        self._entity_id = entity_id
+        self._target_states = target_states if isinstance(target_states, list) else [target_states]
+        self._state = 0  # Tempo in secondi
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return self._name
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement."""
+        return "s"
+
+    async def async_update(self):
+        """Fetch new state data for the sensor."""
+        now = datetime.now()
+        start_time = now.replace(hour=0, minute=0, second=0, microsecond=0)  # Inizio del giorno
+        end_time = now  # Fine del periodo di calcolo
+
+        # Ottieni la cronologia degli stati della caldaia
+        history_list = await history.state_changes_during_period(
+            self._hass, start_time, end_time, self._entity_id
+        )
+
+        if not history_list:
+            return
+
+        # Calcola il tempo trascorso negli stati desiderati
+        total_time = timedelta()
+        previous_state = None
+        previous_time = start_time
+
+        for state in history_list.get(self._entity_id, []):
+            current_state = state.state
+            current_time = state.last_changed
+
+            if previous_state is not None and previous_state in self._target_states:
+                total_time += current_time - previous_time
+
+            previous_state = current_state
+            previous_time = current_time
+
+        # Aggiungi il tempo dall'ultimo stato fino a ora
+        if previous_state is not None and previous_state in self._target_states:
+            total_time += end_time - previous_time
+
+        # Aggiorna lo stato del sensore
+        self._state = int(total_time.total_seconds())
+
+        # Log di debug
+        _LOGGER.debug(
+            f"Sensore {self._name}: Tempo totale={self._state}"
+        )
+
+        self.async_write_ha_state()
