@@ -6,7 +6,6 @@ Integra la tua caldaia intelligente in Home Assistant.
 
 ##### Versione 1.0
 - Monitora le temperature della caldaia.
-- Crea automaticamente una scheda Lovelace per visualizzare i dati.
 
 ##### Versione 2.0
 - Aggiunti sensori per il tempo di funzionamento della caldaia:
