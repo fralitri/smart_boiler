@@ -44,7 +44,7 @@ async def _create_history_stats_sensors(hass, entity_id, async_add_entities):
     # Configura i sensori di tempo
     sensors_config = [
         {
-            "unique_id": "tempo_riscaldamento",
+            "unique_id": SENSOR_HEATING_TIME,
             "name": "Tempo Riscaldamento",
             "entity_id": entity_id,
             "state": "riscaldamento",
@@ -53,7 +53,7 @@ async def _create_history_stats_sensors(hass, entity_id, async_add_entities):
             "end": "{{ now() }}",
         },
         {
-            "unique_id": "tempo_acs",
+            "unique_id": SENSOR_ACS_TIME,
             "name": "Tempo ACS",
             "entity_id": entity_id,
             "state": "acs",
@@ -62,7 +62,7 @@ async def _create_history_stats_sensors(hass, entity_id, async_add_entities):
             "end": "{{ now() }}",
         },
         {
-            "unique_id": "tempo_totale",
+            "unique_id": SENSOR_TOTAL_TIME,
             "name": "Tempo Totale",
             "entity_id": entity_id,
             "state": ["acs", "riscaldamento"],
