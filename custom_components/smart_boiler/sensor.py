@@ -35,26 +35,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     )
 
     # Crea i sensori di tempo utilizzando history_stats
-    await _create_history_stats_sensors(hass, boiler_state_sensor.entity_id)
+    await _create_history_stats_sensors(hass, boiler_state_sensor.entity_id, async_add_entities)
 
-async def _create_history_stats_sensors(hass, entity_id):
+async def _create_history_stats_sensors(hass, entity_id, async_add_entities):
     """Create history_stats sensors for boiler time tracking."""
-    # Sensore per il tempo di riscaldamento
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(
-            hass.config_entries.async_get_entry("smart_boiler"), "sensor"
-        )
-    )
+    from homeassistant.components.history_stats.sensor import HistoryStatsSensor
 
-    # Aggiungi i sensori di tempo alla configurazione di Home Assistant
-    hass.states.async_set("sensor.tempo_riscaldamento", 0, {"unit_of_measurement": "s"})
-    hass.states.async_set("sensor.tempo_acs", 0, {"unit_of_measurement": "s"})
-    hass.states.async_set("sensor.tempo_totale", 0, {"unit_of_measurement": "s"})
-
-    # Configura i sensori di tempo utilizzando history_stats
-    hass.data[DOMAIN]["history_stats_sensors"] = [
+    # Configura i sensori di tempo
+    sensors_config = [
         {
-            "platform": "history_stats",
             "unique_id": "tempo_riscaldamento",
             "name": "Tempo Riscaldamento",
             "entity_id": entity_id,
@@ -64,7 +53,6 @@ async def _create_history_stats_sensors(hass, entity_id):
             "end": "{{ now() }}",
         },
         {
-            "platform": "history_stats",
             "unique_id": "tempo_acs",
             "name": "Tempo ACS",
             "entity_id": entity_id,
@@ -74,7 +62,6 @@ async def _create_history_stats_sensors(hass, entity_id):
             "end": "{{ now() }}",
         },
         {
-            "platform": "history_stats",
             "unique_id": "tempo_totale",
             "name": "Tempo Totale",
             "entity_id": entity_id,
@@ -84,6 +71,20 @@ async def _create_history_stats_sensors(hass, entity_id):
             "end": "{{ now() }}",
         },
     ]
+
+    # Crea i sensori di tempo
+    for config in sensors_config:
+        sensor = HistoryStatsSensor(
+            hass,
+            config["unique_id"],
+            config["name"],
+            config["entity_id"],
+            config["state"],
+            config["type"],
+            config["start"],
+            config["end"],
+        )
+        async_add_entities([sensor], True)
 
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
