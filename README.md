@@ -1,6 +1,6 @@
 # Smart Boiler
 
-Integra la tua caldaia intelligente in Home Assistant.
+Trasforma la tua caldaia in una caldaia intelligente integrata in Home Assistant.
 
 ## Funzionalità
 
