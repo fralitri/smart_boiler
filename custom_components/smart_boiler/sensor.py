@@ -91,7 +91,7 @@ class SmartBoilerStateSensor(Entity):
         elif self._state == "acs":
             return "mdi:water-pump"
         elif self._state == "standby":
-            return "mdi:power-plug-off"
+            return "mdi:power-standby"  # Icona aggiornata per standby
         elif self._state == "circolatore":
             return "mdi:reload"
         elif self._state == "errore":
@@ -170,7 +170,8 @@ class SmartBoilerTimeSensor(Entity):
         self._name = name
         self._target_states = target_states if isinstance(target_states, list) else [target_states]
         self._icon = icon
-        self._state = 0  # Tempo in secondi (valore incrementale)
+        self._state = "00:00:00"  # Formato hh:mm:ss
+        self._total_seconds = 0  # Tempo totale in secondi
         self._last_update = datetime.now()
         self._last_state = None
         self._midnight_reset = False  # Flag per il reset a mezzanotte
@@ -193,7 +194,7 @@ class SmartBoilerTimeSensor(Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        return "s"
+        return None  # Non mostrare unità di misura
 
     async def async_update_time(self, new_state):
         """Update the time based on the new state."""
@@ -201,7 +202,8 @@ class SmartBoilerTimeSensor(Entity):
 
         # Controlla se è mezzanotte e azzera il tempo
         if now.hour == 0 and now.minute == 0 and now.second == 0 and not self._midnight_reset:
-            self._state = 0
+            self._total_seconds = 0
+            self._state = "00:00:00"
             self._midnight_reset = True
         elif now.hour != 0 or now.minute != 0 or now.second != 0:
             self._midnight_reset = False
@@ -211,7 +213,8 @@ class SmartBoilerTimeSensor(Entity):
 
         # Aggiorna il tempo solo se lo stato è attivo
         if new_state in self._target_states:
-            self._state += int(elapsed_time)
+            self._total_seconds += int(elapsed_time)
+            self._state = self._seconds_to_hhmmss(self._total_seconds)
 
         # Aggiorna il timestamp dell'ultimo aggiornamento
         self._last_update = now
@@ -222,3 +225,10 @@ class SmartBoilerTimeSensor(Entity):
         )
 
         self.async_write_ha_state()
+
+    def _seconds_to_hhmmss(self, total_seconds):
+        """Convert seconds to hh:mm:ss."""
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60
+        return f"{hours:02}:{minutes:02}:{seconds:02}"
