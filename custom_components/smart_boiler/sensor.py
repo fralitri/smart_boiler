@@ -90,6 +90,22 @@ class SmartBoilerStateSensor(Entity):
         """Return a unique ID for this entity."""
         return self._unique_id
 
+    @property
+    def icon(self):
+        """Return the icon of the sensor based on the current state."""
+        if self._state == "riscaldamento":
+            return "mdi:radiator"
+        elif self._state == "acs":
+            return "mdi:water-pump"
+        elif self._state == "standby":
+            return "mdi:power-standby"
+        elif self._state == "circolatore":
+            return "mdi:reload"
+        elif self._state == "errore":
+            return "mdi:alert-circle"
+        else:
+            return "mdi:alert-circle"
+
     # ... (resto del codice della classe SmartBoilerStateSensor)
 
 class SmartBoilerTimeSensor(Entity):
@@ -117,5 +133,10 @@ class SmartBoilerTimeSensor(Entity):
     def unique_id(self):
         """Return a unique ID for this entity."""
         return self._unique_id
+
+    @property
+    def icon(self):
+        """Return the icon of the sensor."""
+        return self._icon
 
     # ... (resto del codice della classe SmartBoilerTimeSensor)
