@@ -19,4 +19,22 @@
         "data_description": {
           "hot_water_temp_entity": "Select the sensor for hot water temperature.",
           "cold_water_temp_entity": "Select the sensor for cold water temperature.",
-          "heating_supply_temp_entity": "Select
+          "heating_supply_temp_entity": "Select the sensor for heating supply temperature.",
+          "heating_return_temp_entity": "Select the sensor for heating return temperature.",
+          "flue_temp_entity": "Select the sensor for flue temperature.",
+          "power_entity": "Select the sensor for boiler power consumption.",
+          "power_threshold_standby": "Set the power threshold for standby mode (in Watts).",
+          "power_threshold_acs": "Set the power threshold for ACS mode (in Watts).",
+          "power_threshold_circulator": "Set the power threshold for circulator mode (in Watts).",
+          "power_threshold_heating": "Set the power threshold for heating mode (in Watts)."
+        }
+      }
+    },
+    "error": {
+      "invalid_entity": "Invalid entity selected."
+    },
+    "abort": {
+      "already_configured": "This device is already configured."
+    }
+  }
+}
