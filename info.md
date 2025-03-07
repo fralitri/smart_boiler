@@ -16,7 +16,7 @@ Trasforma la tua caldaia in una caldaia intelligente integrata in Home Assistant
 - Tempi di funzionamento in formato `hh:mm:ss`.
 - Azzeramento automatico dei tempi a mezzanotte.
 - ID univoci per tutte le entità:
-  - `sensor.smart_boiler_boiler_state`
+  - `sensor.smart_boiler_stato_caldaia`
   - `sensor.smart_boiler_heating_time`
   - `sensor.smart_boiler_acs_time`
   - `sensor.smart_boiler_total_time`
