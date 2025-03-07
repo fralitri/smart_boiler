@@ -16,7 +16,7 @@ Trasforma la tua caldaia in una caldaia intelligente integrata in Home Assistant
 - Tempi di funzionamento in formato `hh:mm:ss`.
 - Azzeramento automatico dei tempi a mezzanotte.
 - ID univoci per tutte le entità:
-  - `sensor.smart_boiler_boiler_state`
+  - `sensor.smart_boiler_stato_caldaia`
   - `sensor.smart_boiler_heating_time`
   - `sensor.smart_boiler_acs_time`
   - `sensor.smart_boiler_total_time`
@@ -35,7 +35,7 @@ Trasforma la tua caldaia in una caldaia intelligente integrata in Home Assistant
 - **Versione 1.0**: Funzionalità iniziali di monitoraggio delle temperature.
 
 ## Istruzioni di funzionamento
-- **Stato Caldaia**: Visualizza lo stato attuale della caldaia (riscaldamento, ACS, standby, circolatore, errore). ID: `sensor.smart_boiler_boiler_state`.
+- **Stato Caldaia**: Visualizza lo stato attuale della caldaia (riscaldamento, ACS, standby, circolatore, errore). ID: `sensor.smart_boiler_stato_caldaia`.
 - **Tempo Riscaldamento**: Mostra il tempo totale in cui la caldaia è stata in modalità riscaldamento. ID: `sensor.smart_boiler_heating_time`.
 - **Tempo ACS**: Mostra il tempo totale in cui la caldaia è stata in modalità acqua calda sanitaria. ID: `sensor.smart_boiler_acs_time`.
 - **Tempo Totale**: Mostra il tempo totale di funzionamento (riscaldamento + ACS). ID: `sensor.smart_boiler_total_time`.
