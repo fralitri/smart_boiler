@@ -14,7 +14,7 @@ SENSOR_ACS_TIME = "tempo_acs"
 SENSOR_TOTAL_TIME = "tempo_totale"
 
 # Unique ID per le entità
-UNIQUE_ID_BOILER_STATE = f"{DOMAIN}_stato_caldaia"  # ID univoco per "Stato Caldaia"
-UNIQUE_ID_HEATING_TIME = f"{DOMAIN}_heating_time"  # ID univoco per "Tempo Riscaldamento"
-UNIQUE_ID_ACS_TIME = f"{DOMAIN}_acs_time"  # ID univoco per "Tempo ACS"
-UNIQUE_ID_TOTAL_TIME = f"{DOMAIN}_total_time"  # ID univoco per "Tempo Totale"
+UNIQUE_ID_BOILER_STATE = f"{DOMAIN}_stato_caldaia"
+UNIQUE_ID_HEATING_TIME = f"{DOMAIN}_heating_time"
+UNIQUE_ID_ACS_TIME = f"{DOMAIN}_acs_time"
+UNIQUE_ID_TOTAL_TIME = f"{DOMAIN}_total_time"
