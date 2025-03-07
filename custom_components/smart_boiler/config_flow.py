@@ -1,4 +1,3 @@
-# custom_components/smart_boiler/config_flow.py
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
@@ -24,7 +23,6 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             return self.async_create_entry(title="Smart Boiler", data=user_input)
 
-        # Schema for entity and threshold selection
         data_schema = vol.Schema({
             vol.Required("hot_water_temp_entity"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
@@ -76,7 +74,6 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # Schema for entity and threshold selection
         data_schema = vol.Schema({
             vol.Required("hot_water_temp_entity", default=self.config_entry.options.get("hot_water_temp_entity")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
@@ -93,17 +90,4 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
             vol.Required("flue_temp_entity", default=self.config_entry.options.get("flue_temp_entity")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
-            vol.Required("power_entity", default=self.config_entry.options.get("power_entity")): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="sensor", device_class="power")
-            ),
-            vol.Required("power_threshold_standby", default=self.config_entry.options.get("power_threshold_standby", DEFAULT_POWER_THRESHOLD_STANDBY)): int,
-            vol.Required("power_threshold_acs", default=self.config_entry.options.get("power_threshold_acs", DEFAULT_POWER_THRESHOLD_ACS)): int,
-            vol.Required("power_threshold_circulator", default=self.config_entry.options.get("power_threshold_circulator", DEFAULT_POWER_THRESHOLD_CIRCULATOR)): int,
-            vol.Required("power_threshold_heating", default=self.config_entry.options.get("power_threshold_heating", DEFAULT_POWER_THRESHOLD_HEATING)): int,
-        })
-
-        return self.async_show_form(
-            step_id="init",
-            data_schema=data_schema,
-            errors=errors,
-        )
+            vol.Required("power_entity", default
