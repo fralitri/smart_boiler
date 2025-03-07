@@ -8,10 +8,10 @@ from homeassistant.core import callback
 from datetime import datetime, timedelta
 from .const import (
     DOMAIN,
-    ENTITY_ID_BOILER_STATE,
-    ENTITY_ID_HEATING_TIME,
-    ENTITY_ID_ACS_TIME,
-    ENTITY_ID_TOTAL_TIME,
+    UNIQUE_ID_BOILER_STATE,
+    UNIQUE_ID_HEATING_TIME,
+    UNIQUE_ID_ACS_TIME,
+    UNIQUE_ID_TOTAL_TIME,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,23 +30,21 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_threshold_circulator"],
         config_entry.data["power_threshold_heating"],
     )
-    boiler_state_sensor.entity_id = ENTITY_ID_BOILER_STATE  # ID univoco
-
-    # Aggiungi il sensore principale alla lista delle entità
+    boiler_state_sensor.entity_id = f"sensor.{DOMAIN}_boiler_state"
     entities.append(boiler_state_sensor)
 
     # Crea i sensori per il tempo di funzionamento
-    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "riscaldamento", "mdi:radiator")
-    heating_time_sensor.entity_id = ENTITY_ID_HEATING_TIME  # ID univoco
+    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "riscaldamento", "mdi:radiator", UNIQUE_ID_HEATING_TIME)
+    heating_time_sensor.entity_id = f"sensor.{DOMAIN}_heating_time"
+    entities.append(heating_time_sensor)
 
-    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs", "mdi:water-pump")
-    acs_time_sensor.entity_id = ENTITY_ID_ACS_TIME  # ID univoco
+    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs", "mdi:water-pump", UNIQUE_ID_ACS_TIME)
+    acs_time_sensor.entity_id = f"sensor.{DOMAIN}_acs_time"
+    entities.append(acs_time_sensor)
 
-    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", ["acs", "riscaldamento"], "mdi:clock")
-    total_time_sensor.entity_id = ENTITY_ID_TOTAL_TIME  # ID univoco
-
-    # Aggiungi i sensori di tempo alla lista delle entità
-    entities.extend([heating_time_sensor, acs_time_sensor, total_time_sensor])
+    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", ["acs", "riscaldamento"], "mdi:clock", UNIQUE_ID_TOTAL_TIME)
+    total_time_sensor.entity_id = f"sensor.{DOMAIN}_total_time"
+    entities.append(total_time_sensor)
 
     # Registra le entità in Home Assistant
     async_add_entities(entities, update_before_add=True)
@@ -80,6 +78,12 @@ class SmartBoilerStateSensor(Entity):
         self._acs_time_sensor = None
         self._total_time_sensor = None
         self._update_timer = None
+        self._unique_id = UNIQUE_ID_BOILER_STATE  # Usa la costante per l'ID univoco
+
+    @property
+    def unique_id(self):
+        """Return a unique ID for this entity."""
+        return self._unique_id
 
     def set_time_sensors(self, heating_time_sensor, acs_time_sensor, total_time_sensor):
         """Set the time sensors."""
@@ -178,7 +182,7 @@ class SmartBoilerStateSensor(Entity):
 class SmartBoilerTimeSensor(Entity):
     """Representation of a Smart Boiler Time Sensor."""
 
-    def __init__(self, hass, name, target_states, icon):
+    def __init__(self, hass, name, target_states, icon, unique_id):
         """Initialize the sensor."""
         self._hass = hass
         self._name = name
@@ -189,6 +193,12 @@ class SmartBoilerTimeSensor(Entity):
         self._last_update = datetime.now()
         self._last_state = None
         self._midnight_reset = False
+        self._unique_id = unique_id  # Usa l'ID univoco passato come parametro
+
+    @property
+    def unique_id(self):
+        """Return a unique ID for this entity."""
+        return self._unique_id
 
     @property
     def name(self):
