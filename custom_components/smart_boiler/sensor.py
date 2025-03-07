@@ -12,10 +12,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Smart Boiler sensors from a config entry."""
     entities = []
 
-    # Crea il sensore "Stato Caldaia"
+    # Create the "Boiler State" sensor
     boiler_state_sensor = SmartBoilerStateSensor(
         hass,
-        "Stato Caldaia",
+        "Boiler State",
         config_entry.data["power_entity"],
         config_entry.data["power_threshold_standby"],
         config_entry.data["power_threshold_acs"],
@@ -23,29 +23,29 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_threshold_heating"],
     )
 
-    # Aggiungi il sensore principale alla lista delle entità
+    # Add the main sensor to the entities list
     entities.append(boiler_state_sensor)
 
-    # Crea i sensori per il tempo di funzionamento
-    heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "riscaldamento", "mdi:radiator")
-    acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs", "mdi:water-pump")
-    total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", ["acs", "riscaldamento"], "mdi:clock")
+    # Create the time sensors
+    heating_time_sensor = SmartBoilerTimeSensor(hass, "Heating Time", "heating", "mdi:radiator")
+    acs_time_sensor = SmartBoilerTimeSensor(hass, "ACS Time", "acs", "mdi:water-pump")
+    total_time_sensor = SmartBoilerTimeSensor(hass, "Total Time", ["acs", "heating"], "mdi:clock")
 
-    # Aggiungi i sensori di tempo alla lista delle entità
+    # Add the time sensors to the entities list
     entities.extend([heating_time_sensor, acs_time_sensor, total_time_sensor])
 
-    # Registra le entità in Home Assistant
+    # Register the entities in Home Assistant
     async_add_entities(entities, update_before_add=True)
 
-    # Aggiungi un listener per aggiornamenti in tempo reale
+    # Add a listener for real-time updates
     async_track_state_change(
         hass, config_entry.data["power_entity"], boiler_state_sensor.async_update_callback
     )
 
-    # Collega i sensori di tempo al sensore principale
+    # Link the time sensors to the main sensor
     boiler_state_sensor.set_time_sensors(heating_time_sensor, acs_time_sensor, total_time_sensor)
 
-    # Avvia il timer per aggiornare i sensori di tempo
+    # Start the timer to update the time sensors
     async_call_later(hass, 1, boiler_state_sensor._handle_timer)
 
 class SmartBoilerStateSensor(Entity):
@@ -86,18 +86,18 @@ class SmartBoilerStateSensor(Entity):
     @property
     def icon(self):
         """Return the icon of the sensor based on the current state."""
-        if self._state == "riscaldamento":
+        if self._state == "heating":
             return "mdi:radiator"
         elif self._state == "acs":
             return "mdi:water-pump"
         elif self._state == "standby":
-            return "mdi:power-standby"  # Icona aggiornata per standby
-        elif self._state == "circolatore":
+            return "mdi:power-standby"
+        elif self._state == "circulator":
             return "mdi:reload"
-        elif self._state == "errore":
+        elif self._state == "error":
             return "mdi:alert-circle"
         else:
-            return "mdi:alert-circle"  # Icona predefinita per stati sconosciuti
+            return "mdi:alert-circle"  # Default icon for unknown states
 
     @property
     def extra_state_attributes(self):
@@ -107,37 +107,37 @@ class SmartBoilerStateSensor(Entity):
     async def async_update_callback(self, entity_id, old_state, new_state):
         """Handle state changes for the power sensor."""
         await self.async_update()
-        self.async_write_ha_state()  # Aggiorna lo stato in Home Assistant
+        self.async_write_ha_state()  # Update the state in Home Assistant
 
-        # Aggiorna i sensori di tempo
+        # Update the time sensors
         await self._update_time_sensors()
 
     async def async_update(self):
         """Fetch new state data for the sensor."""
         power_state = self._hass.states.get(self._power_entity)
         if power_state is None or power_state.state in ["unknown", "unavailable"]:
-            self._state = "errore"
+            self._state = "error"
             return
 
         try:
             power = float(power_state.state)
         except (ValueError, TypeError):
-            self._state = "errore"
+            self._state = "error"
             return
 
-        # Determina lo stato della caldaia
+        # Determine the boiler state
         if power < self._threshold_standby:
             self._state = "standby"
         elif self._threshold_standby <= power < self._threshold_acs:
             self._state = "acs"
         elif self._threshold_acs <= power < self._threshold_circulator:
-            self._state = "circolatore"
+            self._state = "circulator"
         elif self._threshold_circulator <= power < self._threshold_heating:
-            self._state = "riscaldamento"
+            self._state = "heating"
         else:
-            self._state = "errore"
+            self._state = "error"
 
-        # Aggiorna gli attributi
+        # Update the attributes
         self._attributes = {
             "power": power,
             "threshold_standby": self._threshold_standby,
@@ -150,7 +150,7 @@ class SmartBoilerStateSensor(Entity):
     def _handle_timer(self, _):
         """Handle the timer callback to update the time sensors."""
         self._hass.async_create_task(self._update_time_sensors())
-        async_call_later(self._hass, 1, self._handle_timer)  # Ripianifica il timer
+        async_call_later(self._hass, 1, self._handle_timer)  # Reschedule the timer
 
     async def _update_time_sensors(self):
         """Update the time sensors based on the current state."""
@@ -170,11 +170,11 @@ class SmartBoilerTimeSensor(Entity):
         self._name = name
         self._target_states = target_states if isinstance(target_states, list) else [target_states]
         self._icon = icon
-        self._state = "00:00:00"  # Formato hh:mm:ss
-        self._total_seconds = 0  # Tempo totale in secondi
+        self._state = "00:00:00"  # Format hh:mm:ss
+        self._total_seconds = 0  # Total time in seconds
         self._last_update = datetime.now()
         self._last_state = None
-        self._midnight_reset = False  # Flag per il reset a mezzanotte
+        self._midnight_reset = False  # Flag for midnight reset
 
     @property
     def name(self):
@@ -194,13 +194,13 @@ class SmartBoilerTimeSensor(Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        return None  # Non mostrare unità di misura
+        return None  # Do not show unit of measurement
 
     async def async_update_time(self, new_state):
         """Update the time based on the new state."""
         now = datetime.now()
 
-        # Controlla se è mezzanotte e azzera il tempo
+        # Check if it's midnight and reset the time
         if now.hour == 0 and now.minute == 0 and now.second == 0 and not self._midnight_reset:
             self._total_seconds = 0
             self._state = "00:00:00"
@@ -208,20 +208,20 @@ class SmartBoilerTimeSensor(Entity):
         elif now.hour != 0 or now.minute != 0 or now.second != 0:
             self._midnight_reset = False
 
-        # Calcola il tempo trascorso
+        # Calculate elapsed time
         elapsed_time = (now - self._last_update).total_seconds()
 
-        # Aggiorna il tempo solo se lo stato è attivo
+        # Update the time only if the state is active
         if new_state in self._target_states:
             self._total_seconds += int(elapsed_time)
             self._state = self._seconds_to_hhmmss(self._total_seconds)
 
-        # Aggiorna il timestamp dell'ultimo aggiornamento
+        # Update the last update timestamp
         self._last_update = now
 
-        # Log di debug
+        # Debug log
         _LOGGER.debug(
-            f"Sensore {self._name}: Stato={new_state}, Tempo trascorso={elapsed_time}, Tempo totale={self._state}"
+            f"Sensor {self._name}: State={new_state}, Elapsed time={elapsed_time}, Total time={self._state}"
         )
 
         self.async_write_ha_state()
