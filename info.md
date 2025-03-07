@@ -4,10 +4,10 @@ Trasforma la tua caldaia in una caldaia intelligente integrata in Home Assistant
 
 #### Funzionalità
 
-##### Versione 1.01.00
+##### Versione 1.0
 - Monitora le temperature della caldaia.
 
-##### Versione 1.02.00
+##### Versione 2.0
 - Aggiunti sensori per il tempo di funzionamento della caldaia:
   - **Tempo di riscaldamento**: Misura il tempo totale in cui la caldaia è in modalità riscaldamento.
   - **Tempo ACS**: Misura il tempo totale in cui la caldaia è in modalità acqua calda sanitaria (ACS).
