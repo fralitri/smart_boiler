@@ -1,10 +1,18 @@
 # custom_components/smart_boiler/sensor.py
+
 import logging
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_state_change, async_call_later
 from homeassistant.const import UnitOfPower
 from homeassistant.core import callback
 from datetime import datetime, timedelta
+from .const import (
+    DOMAIN,
+    ENTITY_ID_BOILER_STATE,
+    ENTITY_ID_HEATING_TIME,
+    ENTITY_ID_ACS_TIME,
+    ENTITY_ID_TOTAL_TIME,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,14 +30,20 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_threshold_circulator"],
         config_entry.data["power_threshold_heating"],
     )
+    boiler_state_sensor.entity_id = ENTITY_ID_BOILER_STATE  # ID univoco
 
     # Aggiungi il sensore principale alla lista delle entità
     entities.append(boiler_state_sensor)
 
     # Crea i sensori per il tempo di funzionamento
     heating_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Riscaldamento", "riscaldamento", "mdi:radiator")
+    heating_time_sensor.entity_id = ENTITY_ID_HEATING_TIME  # ID univoco
+
     acs_time_sensor = SmartBoilerTimeSensor(hass, "Tempo ACS", "acs", "mdi:water-pump")
+    acs_time_sensor.entity_id = ENTITY_ID_ACS_TIME  # ID univoco
+
     total_time_sensor = SmartBoilerTimeSensor(hass, "Tempo Totale", ["acs", "riscaldamento"], "mdi:clock")
+    total_time_sensor.entity_id = ENTITY_ID_TOTAL_TIME  # ID univoco
 
     # Aggiungi i sensori di tempo alla lista delle entità
     entities.extend([heating_time_sensor, acs_time_sensor, total_time_sensor])
@@ -91,13 +105,13 @@ class SmartBoilerStateSensor(Entity):
         elif self._state == "acs":
             return "mdi:water-pump"
         elif self._state == "standby":
-            return "mdi:power-standby"  # Icona aggiornata per standby
+            return "mdi:power-standby"
         elif self._state == "circolatore":
             return "mdi:reload"
         elif self._state == "errore":
             return "mdi:alert-circle"
         else:
-            return "mdi:alert-circle"  # Icona predefinita per stati sconosciuti
+            return "mdi:alert-circle"
 
     @property
     def extra_state_attributes(self):
@@ -107,7 +121,7 @@ class SmartBoilerStateSensor(Entity):
     async def async_update_callback(self, entity_id, old_state, new_state):
         """Handle state changes for the power sensor."""
         await self.async_update()
-        self.async_write_ha_state()  # Aggiorna lo stato in Home Assistant
+        self.async_write_ha_state()
 
         # Aggiorna i sensori di tempo
         await self._update_time_sensors()
@@ -150,7 +164,7 @@ class SmartBoilerStateSensor(Entity):
     def _handle_timer(self, _):
         """Handle the timer callback to update the time sensors."""
         self._hass.async_create_task(self._update_time_sensors())
-        async_call_later(self._hass, 1, self._handle_timer)  # Ripianifica il timer
+        async_call_later(self._hass, 1, self._handle_timer)
 
     async def _update_time_sensors(self):
         """Update the time sensors based on the current state."""
@@ -170,11 +184,11 @@ class SmartBoilerTimeSensor(Entity):
         self._name = name
         self._target_states = target_states if isinstance(target_states, list) else [target_states]
         self._icon = icon
-        self._state = "00:00:00"  # Formato hh:mm:ss
-        self._total_seconds = 0  # Tempo totale in secondi
+        self._state = "00:00:00"
+        self._total_seconds = 0
         self._last_update = datetime.now()
         self._last_state = None
-        self._midnight_reset = False  # Flag per il reset a mezzanotte
+        self._midnight_reset = False
 
     @property
     def name(self):
@@ -194,7 +208,7 @@ class SmartBoilerTimeSensor(Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        return None  # Non mostrare unità di misura
+        return None
 
     async def async_update_time(self, new_state):
         """Update the time based on the new state."""
