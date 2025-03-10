@@ -7,7 +7,16 @@ from homeassistant.core import callback
 from homeassistant.const import CONF_NAME, CONF_UNIQUE_ID
 from homeassistant.components.template.sensor import SensorTemplate
 from homeassistant.components.history_stats.sensor import HistoryStatsSensor
-from .const import DOMAIN
+from .const import (
+    DOMAIN,
+    DEFAULT_POWER_THRESHOLD_STANDBY,
+    DEFAULT_POWER_THRESHOLD_ACS,
+    DEFAULT_POWER_THRESHOLD_CIRCULATOR,
+    DEFAULT_POWER_THRESHOLD_HEATING,
+    SENSOR_HEATING_TIME,
+    SENSOR_ACS_TIME,
+    SENSOR_TOTAL_TIME,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,10 +29,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         hass,
         "Stato Caldaia",
         config_entry.data["power_entity"],
-        config_entry.data["power_threshold_standby"],
-        config_entry.data["power_threshold_acs"],
-        config_entry.data["power_threshold_circulator"],
-        config_entry.data["power_threshold_heating"],
+        config_entry.data.get("power_threshold_standby", DEFAULT_POWER_THRESHOLD_STANDBY),
+        config_entry.data.get("power_threshold_acs", DEFAULT_POWER_THRESHOLD_ACS),
+        config_entry.data.get("power_threshold_circulator", DEFAULT_POWER_THRESHOLD_CIRCULATOR),
+        config_entry.data.get("power_threshold_heating", DEFAULT_POWER_THRESHOLD_HEATING),
     )
     entities.append(boiler_state_sensor)
 
@@ -56,9 +65,9 @@ def create_time_sensors(hass, config_entry):
         hass,
         {
             **history_stats_config,
-            "name": "Tempo Riscaldamento",
+            "name": SENSOR_HEATING_TIME,
             "state": "riscaldamento",
-            CONF_UNIQUE_ID: f"{DOMAIN}_tempo_riscaldamento",
+            CONF_UNIQUE_ID: f"{DOMAIN}_{SENSOR_HEATING_TIME}",
         },
     )
     entities.append(heating_time_sensor)
@@ -68,9 +77,9 @@ def create_time_sensors(hass, config_entry):
         hass,
         {
             **history_stats_config,
-            "name": "Tempo ACS",
+            "name": SENSOR_ACS_TIME,
             "state": "acs",
-            CONF_UNIQUE_ID: f"{DOMAIN}_tempo_acs",
+            CONF_UNIQUE_ID: f"{DOMAIN}_{SENSOR_ACS_TIME}",
         },
     )
     entities.append(acs_time_sensor)
@@ -80,9 +89,9 @@ def create_time_sensors(hass, config_entry):
         hass,
         {
             **history_stats_config,
-            "name": "Tempo Totale",
+            "name": SENSOR_TOTAL_TIME,
             "state": ["riscaldamento", "acs"],
-            CONF_UNIQUE_ID: f"{DOMAIN}_tempo_totale",
+            CONF_UNIQUE_ID: f"{DOMAIN}_{SENSOR_TOTAL_TIME}",
         },
     )
     entities.append(total_time_sensor)
