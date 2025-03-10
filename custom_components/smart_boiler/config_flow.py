@@ -1,5 +1,4 @@
 # custom_components/smart_boiler/config_flow.py
-
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback

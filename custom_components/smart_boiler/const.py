@@ -1,5 +1,4 @@
 # custom_components/smart_boiler/const.py
-
 DOMAIN = "smart_boiler"
 
 # Soglie di potenza predefinite (in Watt)
