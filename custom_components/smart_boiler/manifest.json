@@ -3,7 +3,7 @@
   "name": "Smart Boiler",
   "version": "1.02.01",
   "documentation": "https://github.com/fralitri/smart_boiler",
-  "dependencies": [],
+  "dependencies": ["history_stats"],
   "codeowners": ["@fralitri"],
   "requirements": [],
   "iot_class": "local_polling",
