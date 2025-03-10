@@ -4,7 +4,6 @@ async def create_time_sensors(hass, config_entry):
 
     # Configurazione per i sensori HistoryStats
     history_stats_config = {
-        "entity_id": config_entry.data["power_entity"],
         "start": "{{ today_at() }}",
         "end": "{{ now() }}",
         "type": "time",
