@@ -1,10 +1,10 @@
 # custom_components/smart_boiler/__init__.py
+
 """The Smart Boiler integration."""
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.typing import ConfigType
-
-DOMAIN = "smart_boiler"
+from .const import DOMAIN
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the Smart Boiler component."""
