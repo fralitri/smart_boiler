@@ -37,7 +37,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities.append(boiler_state_sensor)
 
     # Crea i sensori di tempo utilizzando HistoryStats e Template Sensor
-    entities.extend(create_time_sensors(hass, config_entry))
+    entities.extend(await create_time_sensors(hass, config_entry))
 
     # Registra le entità in Home Assistant
     async_add_entities(entities, update_before_add=True)
@@ -47,7 +47,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         hass, config_entry.data["power_entity"], boiler_state_sensor.async_update_callback
     )
 
-def create_time_sensors(hass, config_entry):
+async def create_time_sensors(hass, config_entry):
     """Crea i sensori di tempo utilizzando HistoryStats e Template Sensor."""
     entities = []
 
