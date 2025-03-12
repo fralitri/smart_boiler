@@ -29,22 +29,20 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         hass, config_entry.data["power_entity"], boiler_state_sensor.async_update_callback
     )
 
+# custom_components/smart_boiler/sensor.py
 class SmartBoilerStateSensor(Entity):
-    """Representation of the Smart Boiler State Sensor."""
-
-    def __init__(self, hass, name, unique_id, power_entity, threshold_standby, threshold_acs, threshold_circulator, threshold_heating):
-        """Initialize the sensor."""
+    def __init__(self, hass, name, unique_id, power_entity, threshold_standby=20, threshold_acs=60, threshold_circulator=100, threshold_heating=140):
+        """Initialize the sensor with updated default thresholds."""
         self._hass = hass
         self._name = name
-        self._unique_id = unique_id  # Add unique ID
+        self._unique_id = unique_id
         self._power_entity = power_entity
-        self._threshold_standby = threshold_standby
-        self._threshold_acs = threshold_acs
-        self._threshold_circulator = threshold_circulator
-        self._threshold_heating = threshold_heating
+        self._threshold_standby = threshold_standby  # Default: 20W
+        self._threshold_acs = threshold_acs  # Default: 60W
+        self._threshold_circulator = threshold_circulator  # Default: 100W
+        self._threshold_heating = threshold_heating  # Default: 140W
         self._state = None
         self._attributes = {}
-
     @property
     def name(self):
         """Return the name of the sensor."""
