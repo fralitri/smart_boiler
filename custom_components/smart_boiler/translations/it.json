@@ -13,10 +13,10 @@
         },
         "data_description": {
           "power_entity": "Seleziona il sensore per il consumo di potenza della caldaia.",
-          "power_threshold_standby": "Imposta la soglia di potenza per la modalità standby (in Watt).",
-          "power_threshold_acs": "Imposta la soglia di potenza per la modalità ACS (in Watt).",
-          "power_threshold_circulator": "Imposta la soglia di potenza per la modalità circolatore (in Watt).",
-          "power_threshold_heating": "Imposta la soglia di potenza per la modalità riscaldamento (in Watt)."
+          "power_threshold_standby": "Imposta la soglia di potenza per la modalità standby (default: 20W).",
+          "power_threshold_acs": "Imposta la soglia di potenza per la modalità ACS (default: 60W).",
+          "power_threshold_circulator": "Imposta la soglia di potenza per la modalità circolatore (default: 100W).",
+          "power_threshold_heating": "Imposta la soglia di potenza per la modalità riscaldamento (default: 140W)."
         }
       }
     },
