@@ -5,11 +5,6 @@
         "title": "Configure Smart Boiler",
         "description": "Set up your Smart Boiler integration.",
         "data": {
-          "hot_water_temp_entity": "Hot Water Temperature Sensor",
-          "cold_water_temp_entity": "Cold Water Temperature Sensor",
-          "heating_supply_temp_entity": "Heating Supply Temperature Sensor",
-          "heating_return_temp_entity": "Heating Return Temperature Sensor",
-          "flue_temp_entity": "Flue Temperature Sensor",
           "power_entity": "Boiler Power Sensor",
           "power_threshold_standby": "Standby Power Threshold (W)",
           "power_threshold_acs": "ACS Power Threshold (W)",
@@ -17,11 +12,6 @@
           "power_threshold_heating": "Heating Power Threshold (W)"
         },
         "data_description": {
-          "hot_water_temp_entity": "Select the sensor for hot water temperature.",
-          "cold_water_temp_entity": "Select the sensor for cold water temperature.",
-          "heating_supply_temp_entity": "Select the sensor for heating supply temperature.",
-          "heating_return_temp_entity": "Select the sensor for heating return temperature.",
-          "flue_temp_entity": "Select the sensor for flue temperature.",
           "power_entity": "Select the sensor for boiler power consumption.",
           "power_threshold_standby": "Set the power threshold for standby mode (in Watts).",
           "power_threshold_acs": "Set the power threshold for ACS mode (in Watts).",
