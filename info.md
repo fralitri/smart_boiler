@@ -1,20 +1,26 @@
 ### Smart Boiler
 
-Monitor the state of your smart boiler in Home Assistant.
+Trasforma la tua caldaia in una caldaia intelligente integrata in Home Assistant.
 
-#### Key Features
-- Automatic detection of boiler state (standby, ACS, circulator, heating, error).
-- Customizable power thresholds.
-- Creation of a sensor entity to monitor the boiler state.
+#### Funzionalità
 
-#### Requirements
-- Home Assistant 2023.1 or later.
-- A power sensor to monitor the boiler's power consumption.
+##### Versione 1.0
+- Monitora le temperature della caldaia.
 
-#### Installation
-1. Add this integration via HACS.
-2. Restart Home Assistant.
-3. Configure the integration via the Home Assistant interface.
+##### Versione 2.0
+- Aggiunti sensori per il tempo di funzionamento della caldaia:
+  - **Tempo di riscaldamento**: Misura il tempo totale in cui la caldaia è in modalità riscaldamento.
+  - **Tempo ACS**: Misura il tempo totale in cui la caldaia è in modalità acqua calda sanitaria (ACS).
+  - **Tempo totale**: Misura il tempo totale di funzionamento (riscaldamento + ACS).
+- Icone dinamiche per lo stato della caldaia.
+- Tempi di funzionamento in formato `hh:mm:ss`.
+- Azzeramento automatico dei tempi a mezzanotte.
 
-#### Support
-For issues or support requests, visit the [GitHub page](https://github.com/fralitri/smart_boiler).
+#### Requisiti
+- Home Assistant 2023.1 o superiore.
+- HACS installato.
+
+#### Installazione
+1. Aggiungi questo repository in HACS.
+2. Clicca su **Install**.
+3. Riavvia Home Assistant.

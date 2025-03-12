@@ -1,24 +1,11 @@
 {
   "domain": "smart_boiler",
   "name": "Smart Boiler",
-  "version": "1.00.00",
-  "documentation": "https://github.com/fralitri/smart_boiler",
-  "dependencies": [],
-  "codeowners": ["@fralitri"],
-  "requirements": []{
-  "domain": "smart_boiler",
-  "name": "Smart Boiler",
-  "version": "1.00.00",
+  "version": "2.0",
   "documentation": "https://github.com/fralitri/smart_boiler",
   "dependencies": [],
   "codeowners": ["@fralitri"],
   "requirements": [],
   "iot_class": "local_polling",
   "config_flow": true
-},
-  "iot_class": "local_polling",
-  "config_flow": true,
-  "translations": {
-    "it": "translations/it.json"
-  }
 }
