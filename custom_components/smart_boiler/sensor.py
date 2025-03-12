@@ -8,10 +8,12 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Smart Boiler sensors from a config entry."""
-    # Crea il sensore "Stato Caldaia"
+    # Crea il sensore "Stato Caldaia" con un ID unico
+    unique_id = f"{config_entry.entry_id}_boiler_state"
     boiler_state_sensor = SmartBoilerStateSensor(
         hass,
-        "Stato Caldaia",
+        "Stato Caldaia",  # Nome dell'entità
+        unique_id,  # ID unico
         config_entry.data["power_entity"],
         config_entry.data["power_threshold_standby"],
         config_entry.data["power_threshold_acs"],
@@ -30,10 +32,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
 
-    def __init__(self, hass, name, power_entity, threshold_standby, threshold_acs, threshold_circulator, threshold_heating):
+    def __init__(self, hass, name, unique_id, power_entity, threshold_standby, threshold_acs, threshold_circulator, threshold_heating):
         """Initialize the sensor."""
         self._hass = hass
         self._name = name
+        self._unique_id = unique_id  # Aggiungi l'ID unico
         self._power_entity = power_entity
         self._threshold_standby = threshold_standby
         self._threshold_acs = threshold_acs
@@ -46,6 +49,11 @@ class SmartBoilerStateSensor(Entity):
     def name(self):
         """Return the name of the sensor."""
         return self._name
+
+    @property
+    def unique_id(self):
+        """Return the unique ID of the sensor."""
+        return self._unique_id
 
     @property
     def state(self):
