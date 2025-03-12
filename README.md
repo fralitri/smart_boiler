@@ -1,25 +1,21 @@
-# Smart Boiler
+# Smart Boiler Integration
 
-Integration for Home Assistant that monitors the state of a smart boiler based on power consumption.
-
-## Features
-- Automatic detection of boiler state (standby, ACS, circulator, heating, error).
-- Customizable power thresholds for each state.
-- Creation of a sensor entity to monitor the boiler state.
+This integration allows you to monitor and control your smart boiler in Home Assistant.
 
 ## Installation
-1. Add this integration via HACS or manually copy the `smart_boiler` folder to the `custom_components` directory in Home Assistant.
-2. Restart Home Assistant.
-3. Go to **Settings** > **Devices & Services** > **Add Integration** and search for **Smart Boiler**.
-4. Follow the instructions to configure the integration.
+
+1. Add this repository to HACS (Home Assistant Community Store).
+2. Install the "Smart Boiler" integration.
+3. Restart Home Assistant.
+4. Go to **Settings** -> **Devices & Services** -> **Integrations** and click on **Add Integration**.
+5. Search for "Smart Boiler" and follow the setup instructions.
 
 ## Configuration
-During setup, you will need to select:
-- A power sensor to monitor the boiler's power consumption.
-- Power thresholds for each state (standby, ACS, circulator, heating).
 
-## Support
-For issues or support requests, please open an issue on [GitHub](https://github.com/fralitri/smart_boiler).
+During setup, you will be asked to provide:
+- A power sensor for the boiler.
+- Power thresholds for different boiler states (standby, ACS, circulator, heating).
 
-## License
-This project is released under the MIT License. See the [LICENSE](LICENSE) file for more details.
+## Supported Languages
+
+- **Italian**: The integration is fully translated into Italian.
