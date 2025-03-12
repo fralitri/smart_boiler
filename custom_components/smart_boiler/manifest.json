@@ -7,5 +7,8 @@
   "codeowners": ["@fralitri"],
   "requirements": [],
   "iot_class": "local_polling",
-  "config_flow": true
+  "config_flow": true,
+  "translations": {
+    "it": "translations/it.json"
+  }
 }
