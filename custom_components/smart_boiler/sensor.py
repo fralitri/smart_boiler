@@ -179,22 +179,31 @@ class SmartBoilerTimeSensor(Entity):
         await super().async_added_to_hass()
         self._last_update = dt_util.utcnow()
         async_track_state_change(self._hass, self._boiler_state_sensor.entity_id, self.async_update_callback)
+        self._hass.async_create_task(self.async_periodic_update())
 
     @callback
     async def async_update_callback(self, entity_id, old_state, new_state):
         """Handle state changes for the boiler state sensor."""
-        if new_state is None or new_state.state in [STATE_UNKNOWN, "unavailable"]:
-            return
+        await self.async_update()
+        self.async_write_ha_state()
 
+    async def async_update(self):
+        """Fetch new state data for the sensor."""
         now = dt_util.utcnow()
         time_diff = (now - self._last_update).total_seconds()
 
         # Se la caldaia è nello stato che stiamo tracciando, aggiungi il tempo
-        if new_state.state == self._state_to_track:
+        if self._boiler_state_sensor.state == self._state_to_track:
             self._state += time_diff
 
         self._last_update = now
         self.async_write_ha_state()
+
+    async def async_periodic_update(self):
+        """Force periodic updates every 10 seconds."""
+        while True:
+            await self.async_update()
+            await asyncio.sleep(10)  # Aggiorna ogni 10 secondi
 
 class SmartBoilerTotalTimeSensor(Entity):
     """Representation of the Smart Boiler Total Time Sensor (ACS + Riscaldamento)."""
