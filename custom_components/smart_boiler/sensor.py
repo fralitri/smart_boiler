@@ -159,7 +159,7 @@ class SmartBoilerTimeSensor(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._state
+        return int(self._state)  # Rimuove i decimali
 
     @property
     def unit_of_measurement(self):
@@ -219,7 +219,7 @@ class SmartBoilerTotalTimeSensor(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._state
+        return int(self._state)  # Rimuove i decimali
 
     @property
     def unit_of_measurement(self):
@@ -243,4 +243,4 @@ class SmartBoilerTotalTimeSensor(Entity):
             riscaldamento_time = float(self._hass.states.get(f"sensor.{self._unique_id.replace('_totale', '_riscaldamento')}").state or 0)
             self._state = acs_time + riscaldamento_time
             self.async_write_ha_state()
-            await asyncio.sleep(60)  # Aggiorna ogni minuto
+            await asyncio.sleep(10)  # Aggiorna ogni 10 secondi
