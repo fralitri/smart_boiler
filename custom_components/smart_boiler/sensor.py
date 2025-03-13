@@ -42,6 +42,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         hass, power_entity, boiler_state_sensor.async_update_callback
     )
 
+    # Log per debug
+    _LOGGER.info("Sensori creati: %s", [sensor.name for sensor in sensors])
+
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
 
