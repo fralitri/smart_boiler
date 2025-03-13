@@ -29,9 +29,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Crea i sensori per ACS, Riscaldamento e Totale
     sensors = [
         boiler_state_sensor,
-        SmartBoilerTimeSensor(hass, "Tempo ACS Caldaia", f"{unique_id_prefix}_tempo_acs", power_entity, "acs"),
-        SmartBoilerTimeSensor(hass, "Tempo Riscaldamento Caldaia", f"{unique_id_prefix}_tempo_riscaldamento", power_entity, "riscaldamento"),
-        SmartBoilerTotalTimeSensor(hass, "Tempo Totale Caldaia", f"{unique_id_prefix}_tempo_totale", power_entity),
+        SmartBoilerTimeSensor(hass, "Tempo ACS Caldaia", f"{unique_id_prefix}_tempo_acs", boiler_state_sensor, "acs"),
+        SmartBoilerTimeSensor(hass, "Tempo Riscaldamento Caldaia", f"{unique_id_prefix}_tempo_riscaldamento", boiler_state_sensor, "riscaldamento"),
+        SmartBoilerTotalTimeSensor(hass, "Tempo Totale Caldaia", f"{unique_id_prefix}_tempo_totale"),
     ]
 
     # Aggiungi i sensori alla lista delle entità
@@ -136,12 +136,12 @@ class SmartBoilerStateSensor(Entity):
 class SmartBoilerTimeSensor(Entity):
     """Representation of a Smart Boiler Time Sensor (ACS or Riscaldamento)."""
 
-    def __init__(self, hass, name, unique_id, power_entity, state_to_track):
+    def __init__(self, hass, name, unique_id, boiler_state_sensor, state_to_track):
         """Initialize the sensor."""
         self._hass = hass
         self._name = name
         self._unique_id = unique_id
-        self._power_entity = power_entity
+        self._boiler_state_sensor = boiler_state_sensor
         self._state_to_track = state_to_track
         self._state = 0  # Tempo accumulato in secondi
         self._last_update = dt_util.utcnow()
@@ -169,17 +169,20 @@ class SmartBoilerTimeSensor(Entity):
     @property
     def icon(self):
         """Return the icon of the sensor."""
-        return "mdi:clock" if self._state_to_track == "acs" else "mdi:radiator"
+        if self._state_to_track == "acs":
+            return "mdi:water-pump"  # Icona per ACS
+        else:
+            return "mdi:radiator"  # Icona per Riscaldamento
 
     async def async_added_to_hass(self):
         """Call when entity is added to hass."""
         await super().async_added_to_hass()
         self._last_update = dt_util.utcnow()
-        async_track_state_change(self._hass, self._power_entity, self.async_update_callback)
+        async_track_state_change(self._hass, self._boiler_state_sensor.entity_id, self.async_update_callback)
 
     @callback
     async def async_update_callback(self, entity_id, old_state, new_state):
-        """Handle state changes for the power sensor."""
+        """Handle state changes for the boiler state sensor."""
         if new_state is None or new_state.state in [STATE_UNKNOWN, "unavailable"]:
             return
 
@@ -196,12 +199,11 @@ class SmartBoilerTimeSensor(Entity):
 class SmartBoilerTotalTimeSensor(Entity):
     """Representation of the Smart Boiler Total Time Sensor (ACS + Riscaldamento)."""
 
-    def __init__(self, hass, name, unique_id, power_entity):
+    def __init__(self, hass, name, unique_id):
         """Initialize the sensor."""
         self._hass = hass
         self._name = name
         self._unique_id = unique_id
-        self._power_entity = power_entity
         self._state = 0  # Tempo accumulato in secondi
 
     @property
@@ -227,7 +229,7 @@ class SmartBoilerTotalTimeSensor(Entity):
     @property
     def icon(self):
         """Return the icon of the sensor."""
-        return "mdi:clock-check"
+        return "mdi:clock"  # Icona per il tempo totale
 
     async def async_added_to_hass(self):
         """Call when entity is added to hass."""
