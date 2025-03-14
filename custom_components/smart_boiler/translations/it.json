@@ -1,4 +1,13 @@
 {
+  "state": {
+    "boiler": {
+      "heating": "Riscaldamento",
+      "acs": "Acqua Calda (ACS)",
+      "standby": "Standby",
+      "circulator": "Circolatore",
+      "error": "Errore"
+    }
+  },
   "config": {
     "step": {
       "user": {
