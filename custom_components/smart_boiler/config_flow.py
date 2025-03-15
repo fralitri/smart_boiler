@@ -28,7 +28,19 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Required("power_entity"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
             ),
-            vol.Required("temperature_entity"): selector.EntitySelector(
+            vol.Required("temperature_entity_1"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("temperature_entity_2"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("temperature_entity_3"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("temperature_entity_4"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("temperature_entity_5"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
             vol.Required("power_threshold_standby", default=DEFAULT_POWER_THRESHOLD_STANDBY): int,
@@ -68,7 +80,19 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
             vol.Required("power_entity", default=self.config_entry.options.get("power_entity")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
             ),
-            vol.Required("temperature_entity", default=self.config_entry.options.get("temperature_entity")): selector.EntitySelector(
+            vol.Required("temperature_entity_1", default=self.config_entry.options.get("temperature_entity_1")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("temperature_entity_2", default=self.config_entry.options.get("temperature_entity_2")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("temperature_entity_3", default=self.config_entry.options.get("temperature_entity_3")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("temperature_entity_4", default=self.config_entry.options.get("temperature_entity_4")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("temperature_entity_5", default=self.config_entry.options.get("temperature_entity_5")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
             vol.Required("power_threshold_standby", default=self.config_entry.options.get("power_threshold_standby", DEFAULT_POWER_THRESHOLD_STANDBY)): int,
