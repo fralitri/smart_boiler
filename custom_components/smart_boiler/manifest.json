@@ -1,7 +1,7 @@
 {
   "domain": "smart_boiler",
   "name": "Smart Boiler",
-  "version": "1.00.00",
+  "version": "1.01.00",
   "documentation": "https://github.com/fralitri/smart_boiler",
   "dependencies": [],
   "codeowners": ["@fralitri"],
