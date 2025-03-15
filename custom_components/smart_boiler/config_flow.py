@@ -24,8 +24,23 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             return self.async_create_entry(title="Smart Boiler", data=user_input)
 
-        # Schema for entity and threshold selection
+        # Schema for temperature and power sensor selection
         data_schema = vol.Schema({
+            vol.Required("acs_outlet_temp"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("cold_water_inlet_temp"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("heating_outlet_temp"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("heating_return_temp"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("flue_gas_temp"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
             vol.Required("power_entity"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
             ),
@@ -61,8 +76,23 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # Schema for entity and threshold selection
+        # Schema for temperature and power sensor selection
         data_schema = vol.Schema({
+            vol.Required("acs_outlet_temp", default=self.config_entry.options.get("acs_outlet_temp")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("cold_water_inlet_temp", default=self.config_entry.options.get("cold_water_inlet_temp")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("heating_outlet_temp", default=self.config_entry.options.get("heating_outlet_temp")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("heating_return_temp", default=self.config_entry.options.get("heating_return_temp")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            vol.Required("flue_gas_temp", default=self.config_entry.options.get("flue_gas_temp")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
             vol.Required("power_entity", default=self.config_entry.options.get("power_entity")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
             ),
