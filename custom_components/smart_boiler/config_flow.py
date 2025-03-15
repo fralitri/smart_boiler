@@ -1,4 +1,3 @@
-# custom_components/smart_boiler/config_flow.py
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
@@ -24,10 +23,13 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             return self.async_create_entry(title="Smart Boiler", data=user_input)
 
-        # Schema per la selezione delle entità e delle soglie
+        # Schema for entity selection and thresholds
         data_schema = vol.Schema({
             vol.Required("power_entity"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
+            ),
+            vol.Required("temperature_entity"): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
             vol.Required("power_threshold_standby", default=DEFAULT_POWER_THRESHOLD_STANDBY): int,
             vol.Required("power_threshold_acs", default=DEFAULT_POWER_THRESHOLD_ACS): int,
@@ -61,10 +63,13 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # Schema per la selezione delle entità e delle soglie
+        # Schema for entity selection and thresholds
         data_schema = vol.Schema({
             vol.Required("power_entity", default=self.config_entry.options.get("power_entity")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
+            ),
+            vol.Required("temperature_entity", default=self.config_entry.options.get("temperature_entity")): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
             vol.Required("power_threshold_standby", default=self.config_entry.options.get("power_threshold_standby", DEFAULT_POWER_THRESHOLD_STANDBY)): int,
             vol.Required("power_threshold_acs", default=self.config_entry.options.get("power_threshold_acs", DEFAULT_POWER_THRESHOLD_ACS)): int,
