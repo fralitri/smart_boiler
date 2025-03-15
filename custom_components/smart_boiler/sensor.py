@@ -1,54 +1,3 @@
-# custom_components/smart_boiler/sensor.py
-import logging
-from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.event import async_track_state_change
-from homeassistant.core import callback
-
-_LOGGER = logging.getLogger(__name__)
-
-async def async_setup_entry(hass, config_entry, async_add_entities):
-    """Set up the Smart Boiler sensors from a config entry."""
-    # Create the "Boiler State" sensor with a unique ID
-    unique_id = f"{config_entry.entry_id}_boiler_state"
-    boiler_state_sensor = SmartBoilerStateSensor(
-        hass,
-        config_entry,
-        unique_id,
-        config_entry.data["dhw_outlet_temp"],
-        config_entry.data["cold_water_inlet_temp"],
-        config_entry.data["heating_outlet_temp"],
-        config_entry.data["heating_return_temp"],
-        config_entry.data["flue_gas_temp"],
-        config_entry.data["power_entity"],
-        config_entry.data["power_threshold_standby"],
-        config_entry.data["power_threshold_dhw"],
-        config_entry.data["power_threshold_circulator"],
-        config_entry.data["power_threshold_heating"],
-    )
-
-    # Add the main sensor to the list of entities
-    async_add_entities([boiler_state_sensor], update_before_add=True)
-
-    # Add listeners for real-time updates
-    async_track_state_change(
-        hass, config_entry.data["power_entity"], boiler_state_sensor.async_update_callback
-    )
-    async_track_state_change(
-        hass, config_entry.data["dhw_outlet_temp"], boiler_state_sensor.async_update_callback
-    )
-    async_track_state_change(
-        hass, config_entry.data["cold_water_inlet_temp"], boiler_state_sensor.async_update_callback
-    )
-    async_track_state_change(
-        hass, config_entry.data["heating_outlet_temp"], boiler_state_sensor.async_update_callback
-    )
-    async_track_state_change(
-        hass, config_entry.data["heating_return_temp"], boiler_state_sensor.async_update_callback
-    )
-    async_track_state_change(
-        hass, config_entry.data["flue_gas_temp"], boiler_state_sensor.async_update_callback
-    )
-
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
 
@@ -56,7 +5,6 @@ class SmartBoilerStateSensor(Entity):
         """Initialize the sensor."""
         self._hass = hass
         self._config_entry = config_entry
-        self._name = "Boiler State"
         self._unique_id = unique_id
         self._dhw_outlet_temp = dhw_outlet_temp
         self._cold_water_inlet_temp = cold_water_inlet_temp
@@ -70,6 +18,9 @@ class SmartBoilerStateSensor(Entity):
         self._threshold_heating = threshold_heating
         self._state = None
         self._attributes = {}
+
+        # Use translations for the entity name
+        self._name = self._hass.config_entries.async_get_entry(config_entry.entry_id).title
 
     @property
     def name(self):
