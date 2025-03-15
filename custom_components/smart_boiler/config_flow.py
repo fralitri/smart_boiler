@@ -26,7 +26,7 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # Schema for temperature and power sensor selection
         data_schema = vol.Schema({
-            vol.Required("acs_outlet_temp"): selector.EntitySelector(
+            vol.Required("dhw_outlet_temp"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
             vol.Required("cold_water_inlet_temp"): selector.EntitySelector(
@@ -78,7 +78,7 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
 
         # Schema for temperature and power sensor selection
         data_schema = vol.Schema({
-            vol.Required("acs_outlet_temp", default=self.config_entry.options.get("acs_outlet_temp")): selector.EntitySelector(
+            vol.Required("dhw_outlet_temp", default=self.config_entry.options.get("dhw_outlet_temp")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
             vol.Required("cold_water_inlet_temp", default=self.config_entry.options.get("cold_water_inlet_temp")): selector.EntitySelector(
