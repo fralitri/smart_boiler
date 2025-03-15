@@ -36,5 +36,12 @@
     "abort": {
       "already_configured": "Questo dispositivo è già configurato."
     }
+  },
+  "entity": {
+    "sensor": {
+      "boiler_state": {
+        "name": "Stato Caldaia"
+      }
+    }
   }
 }
