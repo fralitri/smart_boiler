@@ -7,14 +7,14 @@
         "data": {
           "power_entity": "Boiler Power Sensor",
           "power_threshold_standby": "Standby Power Threshold (W)",
-          "power_threshold_acs": "ACS Power Threshold (W)",
+          "power_threshold_dhw": "DHW Power Threshold (W)",
           "power_threshold_circulator": "Circulator Power Threshold (W)",
           "power_threshold_heating": "Heating Power Threshold (W)"
         },
         "data_description": {
           "power_entity": "Select the sensor for boiler power consumption.",
           "power_threshold_standby": "Set the power threshold for standby mode (in Watts).",
-          "power_threshold_acs": "Set the power threshold for ACS mode (in Watts).",
+          "power_threshold_dhw": "Set the power threshold for DHW mode (in Watts).",
           "power_threshold_circulator": "Set the power threshold for circulator mode (in Watts).",
           "power_threshold_heating": "Set the power threshold for heating mode (in Watts)."
         }
