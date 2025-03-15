@@ -12,11 +12,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     unique_id = f"{config_entry.entry_id}_boiler_state"
     boiler_state_sensor = SmartBoilerStateSensor(
         hass,
-        config_entry,  # Pass the config_entry to access translations
+        config_entry,
         unique_id,
         config_entry.data["power_entity"],
         config_entry.data["power_threshold_standby"],
-        config_entry.data["power_threshold_acs"],
+        config_entry.data["power_threshold_dhw"],
         config_entry.data["power_threshold_circulator"],
         config_entry.data["power_threshold_heating"],
     )
@@ -32,15 +32,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
 
-    def __init__(self, hass, config_entry, unique_id, power_entity, threshold_standby, threshold_acs, threshold_circulator, threshold_heating):
+    def __init__(self, hass, config_entry, unique_id, power_entity, threshold_standby, threshold_dhw, threshold_circulator, threshold_heating):
         """Initialize the sensor."""
         self._hass = hass
         self._config_entry = config_entry
-        self._name = "Boiler State"  # Default name, can be translated
+        self._name = "Boiler State"
         self._unique_id = unique_id
         self._power_entity = power_entity
         self._threshold_standby = threshold_standby
-        self._threshold_acs = threshold_acs
+        self._threshold_dhw = threshold_dhw
         self._threshold_circulator = threshold_circulator
         self._threshold_heating = threshold_heating
         self._state = None
@@ -66,7 +66,7 @@ class SmartBoilerStateSensor(Entity):
         """Return the icon of the sensor based on the current state."""
         if self._state == "heating":
             return "mdi:radiator"
-        elif self._state == "acs":
+        elif self._state == "dhw":
             return "mdi:water-pump"
         elif self._state == "standby":
             return "mdi:power-standby"
@@ -103,9 +103,9 @@ class SmartBoilerStateSensor(Entity):
         # Determine the boiler state
         if power < self._threshold_standby:
             self._state = "standby"
-        elif self._threshold_standby <= power < self._threshold_acs:
-            self._state = "acs"
-        elif self._threshold_acs <= power < self._threshold_circulator:
+        elif self._threshold_standby <= power < self._threshold_dhw:
+            self._state = "dhw"
+        elif self._threshold_dhw <= power < self._threshold_circulator:
             self._state = "circulator"
         elif self._threshold_circulator <= power < self._threshold_heating:
             self._state = "heating"
@@ -116,7 +116,7 @@ class SmartBoilerStateSensor(Entity):
         self._attributes = {
             "power": power,
             "threshold_standby": self._threshold_standby,
-            "threshold_acs": self._threshold_acs,
+            "threshold_dhw": self._threshold_dhw,
             "threshold_circulator": self._threshold_circulator,
             "threshold_heating": self._threshold_heating,
         }
