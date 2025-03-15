@@ -1,6 +1,7 @@
+# custom_components/smart_boiler/const.py
 DOMAIN = "smart_boiler"
 
-# Default power thresholds (in Watts)
+# Soglie di potenza predefinite (in Watt)
 DEFAULT_POWER_THRESHOLD_STANDBY = 20
 DEFAULT_POWER_THRESHOLD_ACS = 60
 DEFAULT_POWER_THRESHOLD_CIRCULATOR = 100
