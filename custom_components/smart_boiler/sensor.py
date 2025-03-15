@@ -14,6 +14,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         hass,
         config_entry,
         unique_id,
+        config_entry.data["acs_outlet_temp"],
+        config_entry.data["cold_water_inlet_temp"],
+        config_entry.data["heating_outlet_temp"],
+        config_entry.data["heating_return_temp"],
+        config_entry.data["flue_gas_temp"],
         config_entry.data["power_entity"],
         config_entry.data["power_threshold_standby"],
         config_entry.data["power_threshold_dhw"],
@@ -24,20 +29,40 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Add the main sensor to the list of entities
     async_add_entities([boiler_state_sensor], update_before_add=True)
 
-    # Add a listener for real-time updates
+    # Add listeners for real-time updates
     async_track_state_change(
         hass, config_entry.data["power_entity"], boiler_state_sensor.async_update_callback
+    )
+    async_track_state_change(
+        hass, config_entry.data["acs_outlet_temp"], boiler_state_sensor.async_update_callback
+    )
+    async_track_state_change(
+        hass, config_entry.data["cold_water_inlet_temp"], boiler_state_sensor.async_update_callback
+    )
+    async_track_state_change(
+        hass, config_entry.data["heating_outlet_temp"], boiler_state_sensor.async_update_callback
+    )
+    async_track_state_change(
+        hass, config_entry.data["heating_return_temp"], boiler_state_sensor.async_update_callback
+    )
+    async_track_state_change(
+        hass, config_entry.data["flue_gas_temp"], boiler_state_sensor.async_update_callback
     )
 
 class SmartBoilerStateSensor(Entity):
     """Representation of the Smart Boiler State Sensor."""
 
-    def __init__(self, hass, config_entry, unique_id, power_entity, threshold_standby, threshold_dhw, threshold_circulator, threshold_heating):
+    def __init__(self, hass, config_entry, unique_id, acs_outlet_temp, cold_water_inlet_temp, heating_outlet_temp, heating_return_temp, flue_gas_temp, power_entity, threshold_standby, threshold_dhw, threshold_circulator, threshold_heating):
         """Initialize the sensor."""
         self._hass = hass
         self._config_entry = config_entry
         self._name = "Boiler State"
         self._unique_id = unique_id
+        self._acs_outlet_temp = acs_outlet_temp
+        self._cold_water_inlet_temp = cold_water_inlet_temp
+        self._heating_outlet_temp = heating_outlet_temp
+        self._heating_return_temp = heating_return_temp
+        self._flue_gas_temp = flue_gas_temp
         self._power_entity = power_entity
         self._threshold_standby = threshold_standby
         self._threshold_dhw = threshold_dhw
@@ -83,24 +108,42 @@ class SmartBoilerStateSensor(Entity):
         return self._attributes
 
     async def async_update_callback(self, entity_id, old_state, new_state):
-        """Handle state changes for the power sensor."""
+        """Handle state changes for the power and temperature sensors."""
         await self.async_update()
         self.async_write_ha_state()
 
     async def async_update(self):
         """Fetch new state data for the sensor."""
+        # Fetch temperature states
+        acs_outlet_state = self._hass.states.get(self._acs_outlet_temp)
+        cold_water_inlet_state = self._hass.states.get(self._cold_water_inlet_temp)
+        heating_outlet_state = self._hass.states.get(self._heating_outlet_temp)
+        heating_return_state = self._hass.states.get(self._heating_return_temp)
+        flue_gas_state = self._hass.states.get(self._flue_gas_temp)
+
+        # Fetch power state
         power_state = self._hass.states.get(self._power_entity)
-        if power_state is None or power_state.state in ["unknown", "unavailable"]:
+
+        # Check if any state is invalid
+        if any(state is None or state.state in ["unknown", "unavailable"] for state in [acs_outlet_state, cold_water_inlet_state, heating_outlet_state, heating_return_state, flue_gas_state, power_state]):
             self._state = "error"
             return
 
         try:
+            # Convert temperature states to float
+            acs_outlet_temp = float(acs_outlet_state.state)
+            cold_water_inlet_temp = float(cold_water_inlet_state.state)
+            heating_outlet_temp = float(heating_outlet_state.state)
+            heating_return_temp = float(heating_return_state.state)
+            flue_gas_temp = float(flue_gas_state.state)
+
+            # Convert power state to float
             power = float(power_state.state)
         except (ValueError, TypeError):
             self._state = "error"
             return
 
-        # Determine the boiler state
+        # Determine the boiler state based on power
         if power < self._threshold_standby:
             self._state = "standby"
         elif self._threshold_standby <= power < self._threshold_dhw:
@@ -112,11 +155,12 @@ class SmartBoilerStateSensor(Entity):
         else:
             self._state = "error"
 
-        # Update attributes
+        # Update attributes with temperatures and power
         self._attributes = {
+            "acs_outlet_temp": acs_outlet_temp,
+            "cold_water_inlet_temp": cold_water_inlet_temp,
+            "heating_outlet_temp": heating_outlet_temp,
+            "heating_return_temp": heating_return_temp,
+            "flue_gas_temp": flue_gas_temp,
             "power": power,
-            "threshold_standby": self._threshold_standby,
-            "threshold_dhw": self._threshold_dhw,
-            "threshold_circulator": self._threshold_circulator,
-            "threshold_heating": self._threshold_heating,
-        }
+            "threshold_
