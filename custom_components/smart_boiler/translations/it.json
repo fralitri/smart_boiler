@@ -26,5 +26,19 @@
     "abort": {
       "already_configured": "Questo dispositivo è già configurato."
     }
+  },
+  "sensor": {
+    "acs_time": {
+      "name": "Tempo ACS",
+      "icon": "mdi:water-pump"
+    },
+    "heating_time": {
+      "name": "Tempo Riscaldamento",
+      "icon": "mdi:radiator"
+    },
+    "total_time": {
+      "name": "Tempo Totale",
+      "icon": "mdi:clock"
+    }
   }
 }
