@@ -1,38 +1,30 @@
 # Smart Boiler
 
-Trasforma la tua caldaia in una caldaia intelligente integrata in Home Assistant.
+Transform your boiler into a smart boiler integrated with Home Assistant.
 
-## Funzionalità
+## Features
 
-### Versione 1.0
-- Monitoraggio delle temperature della caldaia.
+### Version 1.0.0
+- Monitor boiler temperatures.
+- Monitor boiler electrical power consumption.
+- Determine the boiler state based on power consumption:
+  - **Standby**: When power consumption is below the standby threshold.
+  - **Domestic Hot Water (DHW)**: When power consumption is between the standby and DHW thresholds.
+  - **Circulator**: When power consumption is between the DHW and circulator thresholds.
+  - **Heating**: When power consumption is between the circulator and heating thresholds.
 
-### Versione 2.0
-- Aggiunti sensori per il tempo di funzionamento della caldaia:
-  - **Tempo di riscaldamento**: Misura il tempo totale in cui la caldaia è in modalità riscaldamento.
-  - **Tempo ACS**: Misura il tempo totale in cui la caldaia è in modalità acqua calda sanitaria (ACS).
-  - **Tempo totale**: Misura il tempo totale di funzionamento (riscaldamento + ACS).
-- Icone dinamiche per lo stato della caldaia.
-- Tempi di funzionamento in formato `hh:mm:ss`.
-- Azzeramento automatico dei tempi a mezzanotte.
+## Installation
+1. Install [HACS](https://hacs.xyz) if you haven't already.
+2. Add this repository to HACS:
+   - Go to **HACS > Integrations > 3 dots (menu) > Custom repositories**.
+   - Enter the repository URL: `https://github.com/fralitri/smart_boiler`.
+   - Select **Integration** as the category.
+3. Click **Install** to install the component.
+4. Restart Home Assistant.
 
-## Installazione
-1. Installa [HACS](https://hacs.xyz) se non lo hai già fatto.
-2. Aggiungi questo repository in HACS:
-   - Vai a **HACS > Integrations > 3 dots (menu) > Custom repositories**.
-   - Inserisci l'URL del repository: `https://github.com/tuo-username/smart_boiler`.
-   - Seleziona **Integration** come categoria.
-3. Clicca su **Install** per installare il componente.
-4. Riavvia Home Assistant.
+## Usage Instructions
+- **Boiler Status**: Displays the current status of the boiler (standby, DHW, circulator, heating, or error).
+- **Power Consumption**: Monitors the boiler's electrical power consumption.
+- **Temperature Monitoring**: Tracks the boiler's temperatures.
 
-## Aggiornamenti
-- **Versione 2.0**: Aggiunti sensori per il tempo di funzionamento della caldaia, icone dinamiche e formato `hh:mm:ss`.
-- **Versione 1.0**: Funzionalità iniziali di monitoraggio delle temperature.
-
-## Istruzioni di funzionamento
-- **Stato Caldaia**: Visualizza lo stato attuale della caldaia (riscaldamento, ACS, standby, circolatore, errore).
-- **Tempo Riscaldamento**: Mostra il tempo totale in cui la caldaia è stata in modalità riscaldamento.
-- **Tempo ACS**: Mostra il tempo totale in cui la caldaia è stata in modalità acqua calda sanitaria.
-- **Tempo Totale**: Mostra il tempo totale di funzionamento (riscaldamento + ACS).
-
-I tempi di funzionamento vengono azzerati automaticamente ogni giorno alle 00:00.
+For more information, visit the [GitHub repository](https://github.com/fralitri/smart_boiler).
