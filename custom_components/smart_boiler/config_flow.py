@@ -24,7 +24,7 @@ class SmartBoilerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             return self.async_create_entry(title="Smart Boiler", data=user_input)
 
-        # Schema per la selezione delle entità e delle soglie
+        # Schema for entity and threshold selection
         data_schema = vol.Schema({
             vol.Required("power_entity"): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
@@ -61,7 +61,7 @@ class SmartBoilerOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # Schema per la selezione delle entità e delle soglie
+        # Schema for entity and threshold selection
         data_schema = vol.Schema({
             vol.Required("power_entity", default=self.config_entry.options.get("power_entity")): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="power")
