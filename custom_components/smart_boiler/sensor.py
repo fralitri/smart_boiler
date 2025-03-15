@@ -20,14 +20,17 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_threshold_heating"],
     )
 
-    # Create the temperature sensor
-    unique_id_temperature = f"{config_entry.entry_id}_temperature"
-    temperature_sensor = SmartBoilerTemperatureSensor(
-        hass,
-        "Boiler Temperature",
-        unique_id_temperature,
-        config_entry.data["temperature_entity"],
-    )
+    # Create the 5 temperature sensors
+    temperature_sensors = []
+    for i in range(1, 6):
+        unique_id_temperature = f"{config_entry.entry_id}_temperature_{i}"
+        temperature_sensor = SmartBoilerTemperatureSensor(
+            hass,
+            f"Boiler Temperature {i}",  # Entity name
+            unique_id_temperature,
+            config_entry.data[f"temperature_entity_{i}"],
+        )
+        temperature_sensors.append(temperature_sensor)
 
     # Create new sensors for ACS time, heating time, and total time
     unique_id_acs_time = f"{config_entry.entry_id}_acs_time"
@@ -60,7 +63,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     # Add all sensors to the list of entities
     async_add_entities(
-        [boiler_state_sensor, temperature_sensor, acs_time_sensor, heating_time_sensor, total_time_sensor],
+        [boiler_state_sensor, *temperature_sensors, acs_time_sensor, heating_time_sensor, total_time_sensor],
         update_before_add=True,
     )
 
@@ -161,7 +164,7 @@ class SmartBoilerStateSensor(Entity):
         }
 
 class SmartBoilerTemperatureSensor(Entity):
-    """Representation of the Smart Boiler Temperature Sensor."""
+    """Representation of a Smart Boiler Temperature Sensor."""
 
     def __init__(self, hass, name, unique_id, temperature_entity):
         """Initialize the sensor."""
