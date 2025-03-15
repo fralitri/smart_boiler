@@ -5,6 +5,11 @@
         "title": "Configure Smart Boiler",
         "description": "Set up your Smart Boiler integration.",
         "data": {
+          "acs_outlet_temp": "DHW Outlet Temperature Sensor",
+          "cold_water_inlet_temp": "Cold Water Inlet Temperature Sensor",
+          "heating_outlet_temp": "Heating Outlet Temperature Sensor",
+          "heating_return_temp": "Heating Return Temperature Sensor",
+          "flue_gas_temp": "Flue Gas Temperature Sensor",
           "power_entity": "Boiler Power Sensor",
           "power_threshold_standby": "Standby Power Threshold (W)",
           "power_threshold_dhw": "DHW Power Threshold (W)",
@@ -12,6 +17,11 @@
           "power_threshold_heating": "Heating Power Threshold (W)"
         },
         "data_description": {
+          "acs_outlet_temp": "Select the sensor for DHW outlet temperature.",
+          "cold_water_inlet_temp": "Select the sensor for cold water inlet temperature.",
+          "heating_outlet_temp": "Select the sensor for heating outlet temperature.",
+          "heating_return_temp": "Select the sensor for heating return temperature.",
+          "flue_gas_temp": "Select the sensor for flue gas temperature (measured outside the flue).",
           "power_entity": "Select the sensor for boiler power consumption.",
           "power_threshold_standby": "Set the power threshold for standby mode (in Watts).",
           "power_threshold_dhw": "Set the power threshold for DHW mode (in Watts).",
