@@ -20,6 +20,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         config_entry.data["power_threshold_heating"],
     )
 
+    # Create the temperature sensor
+    unique_id_temperature = f"{config_entry.entry_id}_temperature"
+    temperature_sensor = SmartBoilerTemperatureSensor(
+        hass,
+        "Boiler Temperature",
+        unique_id_temperature,
+        config_entry.data["temperature_entity"],
+    )
+
     # Create new sensors for ACS time, heating time, and total time
     unique_id_acs_time = f"{config_entry.entry_id}_acs_time"
     unique_id_heating_time = f"{config_entry.entry_id}_heating_time"
@@ -51,7 +60,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     # Add all sensors to the list of entities
     async_add_entities(
-        [boiler_state_sensor, acs_time_sensor, heating_time_sensor, total_time_sensor],
+        [boiler_state_sensor, temperature_sensor, acs_time_sensor, heating_time_sensor, total_time_sensor],
         update_before_add=True,
     )
 
@@ -150,6 +159,49 @@ class SmartBoilerStateSensor(Entity):
             "threshold_circulator": self._threshold_circulator,
             "threshold_heating": self._threshold_heating,
         }
+
+class SmartBoilerTemperatureSensor(Entity):
+    """Representation of the Smart Boiler Temperature Sensor."""
+
+    def __init__(self, hass, name, unique_id, temperature_entity):
+        """Initialize the sensor."""
+        self._hass = hass
+        self._name = name
+        self._unique_id = unique_id
+        self._temperature_entity = temperature_entity
+        self._state = None
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return self._name
+
+    @property
+    def unique_id(self):
+        """Return the unique ID of the sensor."""
+        return self._unique_id
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    @property
+    def icon(self):
+        """Return the icon of the sensor."""
+        return "mdi:thermometer"
+
+    async def async_update(self):
+        """Fetch new state data for the sensor."""
+        temperature_state = self._hass.states.get(self._temperature_entity)
+        if temperature_state is None or temperature_state.state in ["unknown", "unavailable"]:
+            self._state = None
+            return
+
+        try:
+            self._state = float(temperature_state.state)
+        except (ValueError, TypeError):
+            self._state = None
 
 class SmartBoilerACSTimeSensor(Entity):
     """Representation of the Smart Boiler ACS Time Sensor."""
