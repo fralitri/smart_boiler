@@ -5,7 +5,7 @@
         "title": "Configura Smart Boiler",
         "description": "Configura la tua integrazione Smart Boiler.",
         "data": {
-          "acs_outlet_temp": "Sensore Temperatura Mandata ACS",
+          "dhw_outlet_temp": "Sensore Temperatura Mandata ACS",
           "cold_water_inlet_temp": "Sensore Temperatura Ingresso Acqua Fredda",
           "heating_outlet_temp": "Sensore Temperatura Mandata Riscaldamento",
           "heating_return_temp": "Sensore Temperatura Ritorno Riscaldamento",
@@ -17,7 +17,7 @@
           "power_threshold_heating": "Soglia Potenza Modalità Riscaldamento (W)"
         },
         "data_description": {
-          "acs_outlet_temp": "Seleziona il sensore per la temperatura di mandata ACS.",
+          "dhw_outlet_temp": "Seleziona il sensore per la temperatura di mandata ACS.",
           "cold_water_inlet_temp": "Seleziona il sensore per la temperatura di ingresso acqua fredda.",
           "heating_outlet_temp": "Seleziona il sensore per la temperatura di mandata riscaldamento.",
           "heating_return_temp": "Seleziona il sensore per la temperatura di ritorno riscaldamento.",
