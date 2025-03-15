@@ -6,6 +6,7 @@
         "description": "Configura la tua integrazione Smart Boiler.",
         "data": {
           "power_entity": "Sensore di Potenza Caldaia",
+          "temperature_entity": "Sensore di Temperatura Caldaia",
           "power_threshold_standby": "Soglia Potenza Modalità Standby (W)",
           "power_threshold_acs": "Soglia Potenza Modalità ACS (W)",
           "power_threshold_circulator": "Soglia Potenza Modalità Circolatore (W)",
@@ -13,6 +14,7 @@
         },
         "data_description": {
           "power_entity": "Seleziona il sensore per il consumo di potenza della caldaia.",
+          "temperature_entity": "Seleziona il sensore per la temperatura della caldaia.",
           "power_threshold_standby": "Imposta la soglia di potenza per la modalità standby (in Watt).",
           "power_threshold_acs": "Imposta la soglia di potenza per la modalità ACS (in Watt).",
           "power_threshold_circulator": "Imposta la soglia di potenza per la modalità circolatore (in Watt).",
@@ -25,20 +27,6 @@
     },
     "abort": {
       "already_configured": "Questo dispositivo è già configurato."
-    }
-  },
-  "sensor": {
-    "acs_time": {
-      "name": "Tempo ACS",
-      "icon": "mdi:water-pump"
-    },
-    "heating_time": {
-      "name": "Tempo Riscaldamento",
-      "icon": "mdi:radiator"
-    },
-    "total_time": {
-      "name": "Tempo Totale",
-      "icon": "mdi:clock"
     }
   }
 }
