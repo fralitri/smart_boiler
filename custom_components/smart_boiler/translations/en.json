@@ -6,6 +6,7 @@
         "description": "Set up your Smart Boiler integration.",
         "data": {
           "power_entity": "Boiler Power Sensor",
+          "temperature_entity": "Boiler Temperature Sensor",
           "power_threshold_standby": "Standby Power Threshold (W)",
           "power_threshold_acs": "ACS Power Threshold (W)",
           "power_threshold_circulator": "Circulator Power Threshold (W)",
@@ -13,6 +14,7 @@
         },
         "data_description": {
           "power_entity": "Select the sensor for boiler power consumption.",
+          "temperature_entity": "Select the sensor for boiler temperature.",
           "power_threshold_standby": "Set the power threshold for standby mode (in Watts).",
           "power_threshold_acs": "Set the power threshold for ACS mode (in Watts).",
           "power_threshold_circulator": "Set the power threshold for circulator mode (in Watts).",
@@ -25,20 +27,6 @@
     },
     "abort": {
       "already_configured": "This device is already configured."
-    }
-  },
-  "sensor": {
-    "acs_time": {
-      "name": "ACS Time",
-      "icon": "mdi:water-pump"
-    },
-    "heating_time": {
-      "name": "Heating Time",
-      "icon": "mdi:radiator"
-    },
-    "total_time": {
-      "name": "Total Time",
-      "icon": "mdi:clock"
     }
   }
 }
