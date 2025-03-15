@@ -5,7 +5,7 @@
         "title": "Configure Smart Boiler",
         "description": "Set up your Smart Boiler integration.",
         "data": {
-          "acs_outlet_temp": "DHW Outlet Temperature Sensor",
+          "dhw_outlet_temp": "DHW Outlet Temperature Sensor",
           "cold_water_inlet_temp": "Cold Water Inlet Temperature Sensor",
           "heating_outlet_temp": "Heating Outlet Temperature Sensor",
           "heating_return_temp": "Heating Return Temperature Sensor",
@@ -17,7 +17,7 @@
           "power_threshold_heating": "Heating Power Threshold (W)"
         },
         "data_description": {
-          "acs_outlet_temp": "Select the sensor for DHW outlet temperature.",
+          "dhw_outlet_temp": "Select the sensor for DHW outlet temperature.",
           "cold_water_inlet_temp": "Select the sensor for cold water inlet temperature.",
           "heating_outlet_temp": "Select the sensor for heating outlet temperature.",
           "heating_return_temp": "Select the sensor for heating return temperature.",
